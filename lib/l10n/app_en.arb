@@ -36,6 +36,8 @@
   "loginLanguage": "Language",
   "languageNameRu": "Русский",
   "languageNameEn": "English",
+  "languageNameUk": "Українська",
+  
   "selectCountryTitle": "Select country",
   "selectCountrySearchHint": "Search countries…",
   "codeConfirmationSmsSent": "We sent an SMS with a verification code to your phone number.",

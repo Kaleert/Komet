@@ -1,0 +1,1595 @@
+#!/usr/bin/python3
+import os
+import yaml
+import argparse
+from pathlib import Path
+import mimetypes
+import fnmatch
+from datetime import datetime
+import re
+import glob
+import sys
+import math
+from collections import Counter
+import ast
+import tokenize
+from io import StringIO
+
+class CodeAnalyzer:
+    def __init__(self, config_path="analyzer.yml"):
+        self.config = self.read_config(config_path)
+        self.stats = {
+            'total_files': 0,
+            'processed_files': 0,
+            'skipped_files': 0,
+            'binary_files': 0,
+            'excluded_files': 0,
+            'error_files': 0,
+            'total_lines': 0,
+            'total_size_bytes': 0,
+            'total_tokens': 0,
+            'comment_chars': 0,
+            'code_chars': 0,
+            'empty_lines': 0,
+            'import_lines': 0,
+            'boilerplate_lines': 0,
+            'useful_code_percent': 0,
+            'files_by_language': {},
+            'complex_files': [],
+            'clean_removed_chars': 0,
+            'all_todos': [],
+            'unique_todos': set(),
+            'method_count': 0,
+            'class_count': 0,
+            'avg_method_length': 0,
+            'complexity_score': 0,
+            'tech_debt_score': 0,
+            'hotspots': []
+        }
+        self.todo_patterns = self.setup_todo_patterns()
+        self.boilerplate_patterns = self.setup_boilerplate_patterns()
+    
+    def setup_todo_patterns(self):
+        """Настраивает паттерны для поиска TODO и мест для улучшения"""
+        return {
+            'todo_keywords': [
+                r'TODO', r'FIXME', r'XXX', r'HACK', r'BUG', 
+                r'NOTE', r'OPTIMIZE', r'REVIEW', r'IMPROVE'
+            ],
+            'improvement_phrases': [
+                r'нужно\s+(доделать|сделать|реализовать|дописать)',
+                r'следует\s+(доделать|сделать|реализовать|улучшить)',
+                r'надо\s+(доделать|сделать|реализовать)',
+                r'требуется\s+(доделать|сделать|реализовать)',
+                r'реализовать', r'доделать', r'сделать',
+                r'в\s+будущем', r'позже', r'потом',
+                r'временное\s+решение', r'временный\s+код',
+                r'костыль', r'заглушка', r'затычка',
+                r'упрощ[её]нный', r'упрощение',
+                r'в\s+продакшне', r'в\s+продакшене',
+                r'лучше\s+сделать', r'лучше\s+реализовать',
+                r'не\s+оптимально', r'не\s+оптимальное',
+                r'медленно\s+работает', r'ускорить',
+                r'переписать', r'рефакторинг',
+                r'не\s+тестировано', r'протестировать',
+                r'добавить\s+проверку', r'добавить\s+обработку',
+                r'не\s+обработано', r'обработать\s+ошибку',
+                r'упростить', r'улучшить',
+                r'упрощённая\s+реализация', r'упрощенная\s+реализация',
+                r'улучшенная\s+реализация', r'полная\s+реализация',
+                r'дополнить', r'расширить', r'оптимизировать'
+            ]
+        }
+    
+    def setup_boilerplate_patterns(self):
+        """Настраивает паттерны для определения boilerplate кода"""
+        return {
+            'import_patterns': [
+                r'^\s*import\s+', r'^\s*from\s+.*\s+import', r'^\s*#include',
+                r'^\s*package\s+', r'^\s*using\s+', r'^\s*require\s+', r'^\s*#require',
+            ],
+            'boilerplate_patterns': [
+                r'^\s*@(Override|Autowired|Service|Controller|Component|Repository|Entity|Table|Column|Id|GeneratedValue|Getter|Setter|Data|Builder|NoArgsConstructor|AllArgsConstructor)',
+                r'^\s*(public|private|protected)\s+class', r'^\s*(public|private|protected)\s+interface',
+                r'^\s*(public|private|protected)\s+enum', r'^\s*(public|private|protected)\s+static\s+final',
+                r'^\s*public\s+\w+\s+get\w+\s*\(\s*\)', r'^\s*public\s+void\s+set\w+\s*\(\s*\w+\s+\w+\s*\)',
+                r'^\s*public\s+\w+\s*\(\s*\)',
+            ]
+        }
+    
+    def read_config(self, config_path):
+        """Читает конфигурацию из YAML файла"""
+        if not os.path.exists(config_path):
+            default_config = {
+                'exclude': [
+                    '**/node_modules/**', '**/__pycache__/**', '**/.git/**',
+                    '**/venv/**', '**/env/**', '**/build/**', '**/dist/**',
+                    '**/target/**', '**/*.min.js', '**/*.min.css'
+                ],
+                'include': [],
+                'filename': 'project_analysis.txt',
+                'separator': '/* --- %path% --- */',
+                'skipBinary': True,
+                'encoding': 'utf-8',
+                'maxFileSize': 5,
+                'includeExtensions': [],
+                'excludeExtensions': ['.min.js', '.min.css', '.log', '.tmp', '.bak'],
+                'addTimestamp': True,
+                'addHeader': True,
+                'lineEndings': 'preserve',
+                'verbose': False,
+                'splitIntoParts': 1,
+                'maxTokensPerPart': 0,
+                'countEmptyLines': True,
+                'showFileStats': True,
+                'scanTodos': True,
+                'minCommentLength': 30,
+                'showTodosInStats': True,
+                'analyzeCodeQuality': True,
+                'complexityThreshold': 100,
+                'outputFormat': 'text',
+                'showCommentStats': False,
+                'exportTodos': True,
+                'analyzeComplexity': True,
+                'findHotspots': True,
+                'techDebtAnalysis': True
+            }
+            
+            with open(config_path, 'w', encoding='utf-8') as f:
+                yaml.dump(default_config, f, default_flow_style=False, allow_unicode=True)
+            
+            print(f"Создан файл конфигурации: {config_path}")
+            return default_config
+        
+        with open(config_path, 'r', encoding='utf-8') as file:
+            config = yaml.safe_load(file)
+        
+        defaults = {
+            'exclude': [], 'include': [], 'filename': 'project_analysis.txt',
+            'separator': '/* %path% */', 'skipBinary': True, 'encoding': 'utf-8',
+            'maxFileSize': 0, 'includeExtensions': [], 'excludeExtensions': [],
+            'addTimestamp': False, 'addHeader': False, 'lineEndings': 'preserve',
+            'verbose': False, 'splitIntoParts': 1, 'maxTokensPerPart': 0,
+            'countEmptyLines': True, 'showFileStats': True, 'scanTodos': True,
+            'minCommentLength': 50, 'showTodosInStats': True, 'analyzeCodeQuality': True,
+            'complexityThreshold': 100, 'outputFormat': 'text', 'showCommentStats': False,
+            'exportTodos': True, 'analyzeComplexity': True, 'findHotspots': True,
+            'techDebtAnalysis': True
+        }
+        
+        for key, value in defaults.items():
+            config.setdefault(key, value)
+        
+        return config
+        
+    def analyze_java_complexity(self, content, file_path):
+        """Анализирует сложность Java кода"""
+        if not self.config.get('analyzeComplexity', True):
+            return {}
+        
+        if self.detect_language(file_path) != 'java':
+            return {}
+        
+        metrics = {
+            'method_count': 0,
+            'class_count': 0,
+            'avg_method_lines': 0,
+            'max_method_lines': 0,
+            'complex_methods': []
+        }
+        
+        # Поиск классов
+        class_pattern = r'class\s+(\w+)'
+        metrics['class_count'] = len(re.findall(class_pattern, content))
+        
+        # Поиск методов
+        method_pattern = r'(public|private|protected)\s+(\w+(?:<\w+>)?)\s+(\w+)\s*\([^)]*\)\s*\{'
+        methods = []
+        
+        for match in re.finditer(method_pattern, content):
+            method_start = match.end()
+            # Находим закрывающую скобку метода
+            brace_count = 1
+            pos = method_start
+            while brace_count > 0 and pos < len(content):
+                if content[pos] == '{':
+                    brace_count += 1
+                elif content[pos] == '}':
+                    brace_count -= 1
+                pos += 1
+            
+            if brace_count == 0:
+                method_content = content[method_start:pos-1]
+                method_lines = method_content.count('\n') + 1
+                methods.append({
+                    'name': match.group(3),
+                    'lines': method_lines,
+                    'start_line': content[:match.start()].count('\n') + 1
+                })
+        
+        metrics['method_count'] = len(methods)
+        if methods:
+            metrics['avg_method_lines'] = sum(m['lines'] for m in methods) / len(methods)
+            metrics['max_method_lines'] = max(m['lines'] for m in methods)
+            # Сложные методы (>50 строк)
+            metrics['complex_methods'] = [m for m in methods if m['lines'] > 50]
+        
+        return metrics
+        
+    def find_code_hotspots(self, content, file_path):
+        """Находит проблемные места в коде"""
+        if not self.config.get('findHotspots', True):
+            return []
+        
+        hotspots = []
+        lines = content.split('\n')
+        
+        # Паттерны проблемного кода
+        problem_patterns = [
+            (r'System\.out\.println', 'Консольный вывод в коде'),
+            (r'e\.printStackTrace\(\)', 'Вывод stack trace'),
+            (r'Thread\.sleep\(', 'Прямая задержка потока'),
+            (r'catch\s*\(\s*Exception\s+e\s*\)', 'Широкий catch Exception'),
+            (r'if\s*\([^)]*\)\s*\{[^}]{200,}', 'Длинное условие if'),
+            (r'for\s*\([^)]*\)\s*\{[^}]{100,}', 'Сложный цикл for'),
+        ]
+        
+        for i, line in enumerate(lines, 1):
+            for pattern, description in problem_patterns:
+                if re.search(pattern, line):
+                    hotspots.append({
+                        'line': i,
+                        'description': description,
+                        'code': line.strip()[:100]
+                    })
+                    break
+        
+        return hotspots
+        
+    def calculate_tech_debt_score(self):
+	    """Рассчитывает оценку технического долга"""
+	    if not self.config.get('techDebtAnalysis', True):
+	        return 0
+	    
+	    score = 0
+	    
+	    # TODO комментарии
+	    todo_count = sum(1 for todo in self.stats['all_todos'] if 'TODO' in todo['type'])
+	    score += todo_count * 5
+	    
+	    # Сложные методы
+	    file_metrics = getattr(self.stats, 'file_metrics', {})
+	    complex_methods_count = sum(len(metrics.get('complex_methods', [])) 
+	                              for metrics in file_metrics.values())
+	    score += complex_methods_count * 3
+	    
+	    # Проблемные места
+	    hotspots_dict = getattr(self.stats, 'hotspots', {})
+	    hotspots_count = sum(len(hotspots) for hotspots in hotspots_dict.values())
+	    score += hotspots_count * 2
+	    
+	    # Большие файлы
+	    large_files = sum(1 for metrics in file_metrics.values() 
+	                     if metrics.get('method_count', 0) > 20)
+	    score += large_files * 4
+	    
+	    return min(score, 100)  # Ограничиваем 100 баллами
+    
+    def is_binary_file(self, file_path):
+        """Проверяет, является ли файл бинарным несколькими способами"""
+        mime_type, _ = mimetypes.guess_type(file_path)
+        if mime_type and not mime_type.startswith('text'):
+            return True
+        
+        binary_extensions = {'.exe', '.dll', '.so', '.class', '.jar', '.zip', 
+                           '.rar', '.tar', '.gz', '.png', '.jpg', '.jpeg', 
+                           '.gif', '.bmp', '.ico', '.pdf', '.doc', '.docx'}
+        if Path(file_path).suffix.lower() in binary_extensions:
+            return True
+        
+        try:
+            with open(file_path, 'tr', encoding='utf-8') as check_file:
+                check_file.read(1024)
+            return False
+        except:
+            return True
+    
+    def should_include_file(self, file_path, relative_path):
+        """Определяет, нужно ли включать файл в результат"""
+        exclude_list = self.config.get('exclude', [])
+        include_list = self.config.get('include', [])
+        include_extensions = self.config.get('includeExtensions', [])
+        exclude_extensions = self.config.get('excludeExtensions', [])
+        
+        if exclude_list:
+            if any(fnmatch.fnmatch(relative_path, pattern) for pattern in exclude_list):
+                return False
+        
+        if include_list:
+            if not any(fnmatch.fnmatch(relative_path, pattern) for pattern in include_list):
+                return False
+        
+        file_extension = Path(file_path).suffix.lower()
+        
+        if include_extensions and file_extension not in include_extensions:
+            return False
+        
+        if exclude_extensions and file_extension in exclude_extensions:
+            return False
+        
+        max_size = self.config.get('maxFileSize', 0)
+        if max_size > 0:
+            file_size = os.path.getsize(file_path)
+            if file_size > max_size * 1024 * 1024:
+                return False
+        
+        return True
+
+    def detect_language(self, file_path):
+        """Определяет язык программирования по расширению файла"""
+        ext_to_lang = {
+            '.java': 'java', '.js': 'javascript', '.jsx': 'javascript',
+            '.ts': 'typescript', '.tsx': 'typescript', '.py': 'python',
+            '.cpp': 'cpp', '.cc': 'cpp', '.cxx': 'cpp', '.c': 'c',
+            '.h': 'c', '.hpp': 'cpp', '.html': 'html', '.htm': 'html',
+            '.css': 'css', '.php': 'php', '.rb': 'ruby', '.go': 'go',
+            '.rs': 'rust', '.swift': 'swift', '.kt': 'kotlin',
+            '.scala': 'scala', '.sql': 'sql', '.xml': 'xml', '.json': 'json',
+            '.yaml': 'yaml', '.yml': 'yaml', '.md': 'markdown',
+            '.gradle': 'groovy', '.properties': 'properties'
+        }
+        return ext_to_lang.get(Path(file_path).suffix.lower(), 'unknown')
+
+    def analyze_code_metrics(self, content, file_path):
+        """Анализирует метрики кода"""
+        language = self.detect_language(file_path)
+        lines = content.split('\n')
+        
+        metrics = {
+            'total_lines': len(lines),
+            'comment_chars': 0,
+            'code_chars': 0,
+            'empty_lines': 0,
+            'import_lines': 0,
+            'boilerplate_lines': 0,
+            'useful_code_percent': 0
+        }
+        
+        comment_patterns = {
+            'single_line': [r'//.*$', r'#.*$', r'--.*$', r';.*$', r'%.*$', r"\'.*$"],
+            'multi_line': [(r'/\*', r'\*/'), (r'<!--', r'-->'), (r'"""', r'"""'), (r"'''", r"'''")]
+        }
+        
+        in_multiline_comment = False
+        current_multiline_type = None
+        useful_code_chars = 0
+        
+        for line in lines:
+            line_stripped = line.strip()
+            
+            if not line_stripped:
+                metrics['empty_lines'] += 1
+                continue
+            
+            if in_multiline_comment:
+                metrics['comment_chars'] += len(line)
+                end_pattern = current_multiline_type[1]
+                if re.search(end_pattern, line):
+                    in_multiline_comment = False
+                continue
+            
+            multiline_found = False
+            for start_pattern, end_pattern in comment_patterns['multi_line']:
+                if re.search(start_pattern, line):
+                    metrics['comment_chars'] += len(line)
+                    multiline_found = True
+                    if not re.search(end_pattern, line):
+                        in_multiline_comment = True
+                        current_multiline_type = (start_pattern, end_pattern)
+                    break
+            
+            if multiline_found:
+                continue
+            
+            line_without_comments = line
+            has_comment = False
+            
+            for pattern in comment_patterns['single_line']:
+                match = re.search(pattern, line)
+                if match:
+                    comment_text = match.group(0)
+                    metrics['comment_chars'] += len(comment_text)
+                    line_without_comments = re.sub(pattern, '', line)
+                    has_comment = True
+                    break
+            
+            line_clean = line_without_comments.strip()
+            
+            if not line_clean and has_comment:
+                continue
+            
+            if not line_clean:
+                continue
+            
+            is_import = any(re.match(pattern, line_clean) for pattern in self.boilerplate_patterns['import_patterns'])
+            if is_import:
+                metrics['import_lines'] += 1
+                metrics['boilerplate_lines'] += 1
+                continue
+            
+            is_boilerplate = any(re.match(pattern, line_clean) for pattern in self.boilerplate_patterns['boilerplate_patterns'])
+            if is_boilerplate:
+                metrics['boilerplate_lines'] += 1
+                continue
+            
+            useful_code_chars += len(line_clean)
+            metrics['code_chars'] += len(line_clean)
+        
+        # Рассчитываем процент полезного кода
+        if metrics['total_lines'] > 0:
+            useful_lines = metrics['total_lines'] - metrics['empty_lines'] - metrics['import_lines'] - metrics['boilerplate_lines']
+            metrics['useful_code_percent'] = (useful_lines / metrics['total_lines']) * 100
+        
+        return metrics
+
+    def find_todo_comments(self, content, file_path):
+        """Находит TODO комментарии и места для улучшения"""
+        if not self.config.get('scanTodos', True):
+            return []
+        
+        language = self.detect_language(file_path)
+        
+        # Паттерны комментариев для разных языков
+        comment_patterns = {
+            'java': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'javascript': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'python': [r'#[^\n]*', r'""".*?"""', r"'''.*?'''"],
+            'cpp': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'c': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'html': [r'<!--.*?-->'],
+            'css': [r'/\*[\s\S]*?\*/'],
+            'php': [r'//[^\n]*', r'#[^\n]*', r'/\*[\s\S]*?\*/'],
+            'ruby': [r'#[^\n]*', r'=begin[\s\S]*?=end'],
+            'go': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'rust': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'swift': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'kotlin': [r'//[^\n]*', r'/\*[\s\S]*?\*/']
+        }
+        
+        patterns = comment_patterns.get(language, [])
+        todos = []
+        found_signatures = set()  # Для избежания дубликатов
+        
+        for pattern in patterns:
+            try:
+                matches = re.finditer(pattern, content, re.MULTILINE | re.IGNORECASE)
+                for match in matches:
+                    comment_text = match.group().strip()
+                    
+                    # Пропускаем короткие комментарии
+                    if len(comment_text) < self.config.get('minCommentLength', 20):
+                        continue
+                    
+                    # Создаем уникальную сигнатуру комментария
+                    line_num = content[:match.start()].count('\n') + 1
+                    comment_signature = f"{file_path}:{line_num}:{comment_text[:50]}"
+                    
+                    # Пропускаем дубликаты
+                    if comment_signature in found_signatures:
+                        continue
+                    found_signatures.add(comment_signature)
+                    
+                    # Проверяем на TODO ключевые слова
+                    has_todo = False
+                    for keyword in self.todo_patterns['todo_keywords']:
+                        if re.search(keyword, comment_text, re.IGNORECASE):
+                            has_todo = True
+                            break
+                    
+                    # Проверяем на фразы улучшения
+                    has_improvement = False
+                    for phrase in self.todo_patterns['improvement_phrases']:
+                        if re.search(phrase, comment_text, re.IGNORECASE):
+                            has_improvement = True
+                            break
+                    
+                    # Определяем тип комментария
+                    if has_todo and has_improvement:
+                        todo_type = 'TODO_IMPROVEMENT'
+                    elif has_todo:
+                        todo_type = 'TODO'
+                    elif has_improvement:
+                        todo_type = 'IMPROVEMENT'
+                    else:
+                        continue
+                    
+                    # Создаем уникальный ключ для TODO
+                    todo_key = f"{file_path}:{line_num}:{comment_text}"
+                    if todo_key in self.stats['unique_todos']:
+                        continue
+                    self.stats['unique_todos'].add(todo_key)
+                    
+                    todos.append({
+                        'type': todo_type,
+                        'text': comment_text,
+                        'line': line_num,
+                        'language': language,
+                        'file': file_path
+                    })
+                    
+            except Exception as e:
+                if self.config.get('verbose'):
+                    print(f"Ошибка при поиске TODO в {file_path}: {e}")
+        
+        return todos
+
+    def clean_comments(self, content, file_path):
+        """Удаляет все комментарии, кроме TODO и важных пометок"""
+        language = self.detect_language(file_path)
+        
+        comment_patterns = {
+            'java': [
+                (r'//(?![^\n]*\b(TODO|FIXME|XXX|HACK|NOTE|OPTIMIZE|REVIEW|IMPROVE|нужно|следует|надо|требуется|реализовать|доделать|сделать|временн|костыль|заглушка|упрощ[её]нн|в продакшн|лучше сделать|не оптимальн|медленно|переписать|рефакторинг|не тестирован|добавить проверку|не обработано|упростить|улучшить)\b)[^\n]*', ''),
+                (r'/\*(?![\s\S]*\b(TODO|FIXME|XXX|HACK|NOTE|OPTIMIZE|REVIEW|IMPROVE|нужно|следует|надо|требуется|реализовать|доделать|сделать|временн|костыль|заглушка|упрощ[её]нн|в продакшн|лучше сделать|не оптимальн|медленно|переписать|рефакторинг|не тестирован|добавить проверку|не обработано|упростить|улучшить)\b)[\s\S]*?\*/', ''),
+            ],
+            'python': [
+                (r'#(?![^\n]*\b(TODO|FIXME|XXX|HACK|NOTE|OPTIMIZE|REVIEW|IMPROVE|нужно|следует|надо|требуется|реализовать|доделать|сделать|временн|костыль|заглушка|упрощ[её]нн|в продакшн|лучше сделать|не оптимальн|медленно|переписать|рефакторинг|не тестирован|добавить проверку|не обработано|упростить|улучшить)\b)[^\n]*', ''),
+            ]
+        }
+        
+        patterns = comment_patterns.get(language, [])
+        original_length = len(content)
+        cleaned_content = content
+        
+        for pattern, replacement in patterns:
+            try:
+                cleaned_content = re.sub(pattern, replacement, cleaned_content)
+            except Exception as e:
+                if self.config.get('verbose'):
+                    print(f"Ошибка при очистке комментариев в {file_path}: {e}")
+        
+        removed_chars = original_length - len(cleaned_content)
+        removed_lines = cleaned_content.count('\n') - content.count('\n')
+        
+        self.stats['clean_removed_chars'] += removed_chars
+        self.stats['clean_removed_lines'] += abs(removed_lines)
+        
+        return cleaned_content
+
+    def normalize_line_endings(self, content):
+        """Нормализует переводы строк"""
+        line_endings = self.config.get('lineEndings', 'preserve')
+        
+        if line_endings == 'unix':
+            return content.replace('\r\n', '\n').replace('\r', '\n')
+        elif line_endings == 'windows':
+            return content.replace('\r\n', '\n').replace('\r', '\n').replace('\n', '\r\n')
+        else:
+            return content
+    
+    def write_header(self, output_file, part_info=None):
+        """Записывает заголовок в выходной файл"""
+        if self.config.get('addHeader'):
+            part_suffix = f" | Part {part_info['current']} of {part_info['total']}" if part_info else ""
+            size_mb = self.stats['total_size_bytes'] / (1024 * 1024)
+            
+            # Подсчитываем актуальные цифры
+            todo_count = sum(1 for todo in self.stats['all_todos'] if 'TODO' in todo['type'])
+            improvement_count = sum(1 for todo in self.stats['all_todos'] if 'IMPROVEMENT' in todo['type'])
+            
+            todo_info = ""
+            if self.config.get('showTodosInStats', True):
+                todo_info = f"""
+ * TODO comments: {todo_count}
+ * Improvement suggestions: {improvement_count}"""
+            
+            header = f"""/*
+ * Generated by CodeAnalyzer
+ * Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+ * Total files: {self.stats['processed_files']}
+ * Total lines: {self.stats['total_lines']:,}
+ * Total size: {self.stats['total_size_bytes']:,} bytes ({size_mb:.2f} MB)
+ * Estimated tokens: {self.stats['total_tokens']:,}{todo_info}{part_suffix}
+ */
+
+"""
+            output_file.write(header)
+    
+    def get_useful_code_percentage(self):
+        """Возвращает процент полезного кода"""
+        if self.stats['total_lines'] == 0:
+            return 0
+        return (self.stats['useful_code_lines'] / self.stats['total_lines']) * 100
+    
+    def estimate_tokens(self, text):
+        """Примерная оценка количества токенов в тексте"""
+        words = len(text.split())
+        chars = len(text)
+        token_estimate = max(words * 0.75, chars / 4)
+        return int(token_estimate)
+    
+    def split_into_parts(self, content):
+        """Разбивает содержимое на части, сохраняя целостность файлов"""
+        split_into_parts = self.config.get('splitIntoParts', 1)
+        max_tokens_per_part = self.config.get('maxTokensPerPart', 0)
+        
+        if self.config.get('verbose'):
+            print(f"DEBUG: splitIntoParts = {split_into_parts}, maxTokensPerPart = {max_tokens_per_part}")
+        
+        if split_into_parts <= 1 and max_tokens_per_part <= 0:
+            if self.config.get('verbose'):
+                print("DEBUG: No splitting needed")
+            return [content]
+        
+        separator_template = self.config.get('separator', '/* %path% */')
+        separator_pattern = re.escape(separator_template)
+        separator_pattern = separator_pattern.replace(re.escape('%path%'), '.*?')
+        
+        matches = list(re.finditer(separator_pattern, content))
+        
+        if self.config.get('verbose'):
+            print(f"DEBUG: Found {len(matches)} separator matches")
+        
+        if not matches:
+            if self.config.get('verbose'):
+                print("DEBUG: No separators found, cannot split")
+            return [content]
+        
+        file_sections = []
+        last_end = 0
+        
+        for i, match in enumerate(matches):
+            if i > 0:
+                file_end = matches[i-1].end()
+                file_content = content[last_end:file_end]
+                file_sections.append(file_content)
+                last_end = file_end
+            
+            if i == len(matches) - 1:
+                file_content = content[last_end:]
+                file_sections.append(file_content)
+        
+        if self.config.get('verbose'):
+            print(f"DEBUG: Split into {len(file_sections)} file sections")
+        
+        if split_into_parts > 1:
+            files_per_part = max(1, len(file_sections) // split_into_parts)
+            parts = []
+            current_part = []
+            
+            if self.config.get('verbose'):
+                print(f"DEBUG: Splitting into {split_into_parts} parts, approx {files_per_part} files per part")
+            
+            for i, file_content in enumerate(file_sections):
+                current_part.append(file_content)
+                
+                if (len(current_part) >= files_per_part and 
+                    len(parts) < split_into_parts - 1):
+                    parts.append(''.join(current_part))
+                    current_part = []
+                    if self.config.get('verbose'):
+                        print(f"DEBUG: Created part {len(parts)} with {i+1} files")
+            
+            if current_part:
+                parts.append(''.join(current_part))
+                if self.config.get('verbose'):
+                    print(f"DEBUG: Created final part {len(parts)} with {len(current_part)} files")
+            
+            if self.config.get('verbose'):
+                print(f"DEBUG: Total parts created: {len(parts)}")
+            return parts
+        
+        elif max_tokens_per_part > 0:
+            parts = []
+            current_part = []
+            current_tokens = 0
+            
+            for file_content in file_sections:
+                file_tokens = self.estimate_tokens(file_content)
+                
+                if file_tokens > max_tokens_per_part:
+                    print(f"Предупреждение: файл превышает maxTokensPerPart ({file_tokens} > {max_tokens_per_part})")
+                    if current_part:
+                        parts.append(''.join(current_part))
+                    parts.append(file_content)
+                    current_part = []
+                    current_tokens = 0
+                elif current_tokens + file_tokens > max_tokens_per_part and current_part:
+                    parts.append(''.join(current_part))
+                    current_part = [file_content]
+                    current_tokens = file_tokens
+                else:
+                    current_part.append(file_content)
+                    current_tokens += file_tokens
+            
+            if current_part:
+                parts.append(''.join(current_part))
+            
+            return parts
+        
+        return [content]
+    
+    def get_file_stats(self, file_path, content):
+        """Собирает статистику по файлу"""
+        metrics = self.analyze_code_metrics(content, file_path)
+        
+        # ВРЕМЕННО: используем старый метод для TODO
+        important_comments = self.find_todo_comments(content, file_path)
+        
+        # ВРЕМЕННО отключаем расширенный анализ для не-Java файлов
+        if self.detect_language(file_path) == 'java':
+            try:
+                # Добавляем к существующим TODO
+                extended_comments = self.find_important_comments(content, file_path)
+                important_comments.extend(extended_comments)
+            except Exception as e:
+                if self.config.get('verbose'):
+                    print(f"Ошибка расширенного анализа комментариев: {e}")
+        
+        # Дополнительный анализ
+        complexity_metrics = {}
+        hotspots = []
+        dependencies = {}
+        duplicates = []
+        style_issues = []
+        test_coverage = {}
+        
+        if self.detect_language(file_path) == 'java':
+            complexity_metrics = self.analyze_java_complexity(content, file_path)
+            hotspots = self.find_code_hotspots(content, file_path)
+            dependencies = self.analyze_dependencies(content, file_path)
+            duplicates = self.find_duplicate_code(content, file_path)
+            style_issues = self.check_code_style(content, file_path)
+            test_coverage = self.analyze_test_coverage(file_path)
+        
+        # Инициализируем defaults для complexity_metrics
+        complexity_metrics.setdefault('method_count', 0)
+        complexity_metrics.setdefault('class_count', 0)
+        complexity_metrics.setdefault('avg_method_lines', 0)
+        complexity_metrics.setdefault('max_method_lines', 0)
+        complexity_metrics.setdefault('complex_methods', [])
+        
+        # Сохраняем важные комментарии в общий список
+        for comment in important_comments:
+            comment['file'] = os.path.relpath(file_path, '.')
+            self.stats['all_todos'].append(comment)
+        
+        stats = {
+            'lines': metrics['total_lines'],
+            'size': os.path.getsize(file_path),
+            'tokens': self.estimate_tokens(content),
+            'encoding': self.config.get('encoding', 'utf-8'),
+            'important_comments': important_comments,  # ЗАМЕНИЛИ 'todos'
+            'metrics': metrics,
+            'complexity': complexity_metrics,
+            'hotspots': hotspots,
+            'dependencies': dependencies,
+            'duplicates': duplicates,
+            'style_issues': style_issues,
+            'test_coverage': test_coverage,
+            'language': self.detect_language(file_path)
+        }
+        return stats
+    
+    def print_file_info(self, relative_path, stats):
+        """Выводит информацию о файле если включен verbose режим"""
+        if self.config.get('verbose') and self.config.get('showFileStats'):
+            todo_info = ""
+            if stats['important_comments']:  # ЗАМЕНИЛИ 'todos'
+                todo_count = len(stats['important_comments'])  # ЗАМЕНИЛИ 'todos'
+                todo_info = f" - ⚠️ {todo_count} важных комментариев"
+            
+            complexity_info = ""
+            if stats['complexity'] and stats['complexity'].get('complex_methods'):
+                complex_count = len(stats['complexity']['complex_methods'])
+                complexity_info = f" - 🔥 {complex_count} сложных методов"
+            
+            print(f"✓ {relative_path} - {stats['metrics']['useful_code_percent']:.1f}% полезного кода{todo_info}{complexity_info}")
+           
+    def print_quality_metrics(self):
+        """Выводит метрики качества кода"""
+        if not self.config.get('analyzeCodeQuality', True):
+            return
+        
+        print("\n" + "🔧 МЕТРИКИ КАЧЕСТВА КОДА:")
+        print("-" * 50)
+        
+        # Инициализируем file_metrics если его нет
+        file_metrics = getattr(self.stats, 'file_metrics', {})
+        
+        # Общие метрики
+        total_methods = 0
+        total_classes = 0
+        avg_method_length_sum = 0
+        file_metrics_count = 0
+        
+        for metrics in file_metrics.values():
+            total_methods += metrics.get('method_count', 0)
+            total_classes += metrics.get('class_count', 0)
+            if metrics.get('avg_method_lines', 0) > 0:
+                avg_method_length_sum += metrics.get('avg_method_lines', 0)
+                file_metrics_count += 1
+        
+        if total_methods > 0:
+            avg_method_length = avg_method_length_sum / file_metrics_count if file_metrics_count > 0 else 0
+            print(f"📊 Методов: {total_methods}")
+            print(f"📊 Классов: {total_classes}")
+            if avg_method_length > 0:
+                print(f"📊 Средняя длина метода: {avg_method_length:.1f} строк")
+        
+        # Технический долг
+        tech_debt_score = self.calculate_tech_debt_score()
+        debt_level = "🟢 Низкий" if tech_debt_score < 20 else "🟡 Средний" if tech_debt_score < 50 else "🔴 Высокий"
+        print(f"📊 Оценка техдолга: {tech_debt_score}/100 ({debt_level})")
+	    
+        # Проблемные файлы
+        complex_files = [f for f, metrics in file_metrics.items() 
+                        if metrics.get('complex_methods')]
+        if complex_files:
+            print(f"🔥 Файлов со сложными методами: {len(complex_files)}")
+        
+        # Горячие точки
+        hotspots_dict = getattr(self.stats, 'hotspots', {})
+        total_hotspots = sum(len(hotspots) for hotspots in hotspots_dict.values())
+        if total_hotspots > 0:
+	        print(f"🚨 Проблемных мест: {total_hotspots}")
+
+        total_duplicates = sum(len(stats.get('duplicates', [])) 
+                          for stats in self.stats.get('file_stats', {}).values())
+        total_style_issues = sum(len(stats.get('style_issues', [])) 
+                           for stats in self.stats.get('file_stats', {}).values())
+                           
+        if total_duplicates > 0:
+            print(f"🔁 Потенциальных дубликатов: {total_duplicates}")
+    
+        if total_style_issues > 0:
+	        print(f"🎨 Проблем стиля: {total_style_issues}")
+	    
+	    # Экспортируем сложные метод
+        self.export_complex_methods()
+    
+    def export_todos_to_file(self):
+        """Экспортирует все TODO в отдельный файл"""
+        if not self.stats['all_todos']:
+            return
+        
+        # Сортируем TODO по файлам и строкам
+        todos_by_file = {}
+        for todo in self.stats['all_todos']:
+            file_path = todo['file']
+            if file_path not in todos_by_file:
+                todos_by_file[file_path] = []
+            todos_by_file[file_path].append(todo)
+        
+        # Сортируем файлы и TODO внутри файлов
+        for file_path in todos_by_file:
+            todos_by_file[file_path].sort(key=lambda x: x['line'])
+        
+        # Записываем в файл
+        with open('important_comments.txt', 'w', encoding='utf-8') as f:
+            f.write("💡 ВАЖНЫЕ КОММЕНТАРИИ И TODO\n")
+            f.write("=" * 60 + "\n\n")
+            f.write(f"Всего найдено: {len(self.stats['all_todos'])} комментариев\n")
+            f.write(f"Дата создания: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            
+            for file_path, file_todos in sorted(todos_by_file.items()):
+                f.write(f"\n📁 {file_path}\n")
+                f.write("─" * 50 + "\n")
+                
+                for todo in file_todos:
+                    if todo['type'] == 'TODO':
+                        icon = "🔸 TODO"
+                    elif todo['type'] == 'IMPROVEMENT':
+                        icon = "💡 IMPROVEMENT"
+                    else:
+                        icon = "🔸💡 TODO+IMPROVEMENT"
+                    
+                    f.write(f"\n{icon} (строка {todo['line']}):\n")
+                    f.write(f"   {todo['text']}\n")
+    
+    def print_todo_summary(self):
+        """Выводит сводку по найденным TODO комментариям"""
+        if not self.stats['all_todos']:
+            return
+        
+        # Подсчитываем статистику
+        todo_count = sum(1 for todo in self.stats['all_todos'] if 'TODO' in todo['type'])
+        improvement_count = sum(1 for todo in self.stats['all_todos'] if 'IMPROVEMENT' in todo['type'])
+        
+        print("\n" + "🔍 НАЙДЕННЫЕ TODO И МЕСТА ДЛЯ УЛУЧШЕНИЙ:")
+        print("-" * 50)
+        print(f"📋 TODO комментариев: {todo_count}")
+        print(f"💡 Предложений по улучшению: {improvement_count}")
+        
+        # Экспортируем в файл
+        if self.config.get('exportTodos', True):
+            self.export_todos_to_file()
+            print(f"📄 Полный отчёт сохранён в: important_comments.txt")
+        
+        # Выводим краткий список
+        print(f"\n📝 Конкретные места:")
+        print("-" * 30)
+        
+        # Группируем по файлам
+        todos_by_file = {}
+        for todo in self.stats['all_todos']:
+            file_path = todo['file']
+            if file_path not in todos_by_file:
+                todos_by_file[file_path] = []
+            todos_by_file[file_path].append(todo)
+        
+        # Показываем по 2 примера из каждого файла
+        for file_path, file_todos in list(todos_by_file.items())[:6]:
+            print(f"\n📁 {file_path}:")
+            for todo in file_todos[:2]:
+                icon = "🔸" if 'TODO' in todo['type'] else "💡"
+                preview = todo['text'][:80] + "..." if len(todo['text']) > 80 else todo['text']
+                print(f"  {icon} Строка {todo['line']}: {preview}")
+            
+            if len(file_todos) > 2:
+                print(f"  ... и ещё {len(file_todos) - 2}")
+    
+    def analyze_project(self, root_dir='.'):
+	    """Анализирует проект без создания выходного файла"""
+	    print("🔍 Анализ проекта...")
+	    
+	    # Очищаем предыдущие TODO
+	    self.stats['all_todos'] = []
+	    self.stats['unique_todos'] = set()
+	    self.stats['file_metrics'] = {}  # ← ДОБАВИТЬ ЭТО
+	    self.stats['hotspots'] = {}      # ← ДОБАВИТЬ ЭТО
+	    
+	    for root, dirs, files in os.walk(root_dir):
+	        dirs[:] = [d for d in dirs if self.should_include_file(
+	            os.path.join(root, d), 
+	            os.path.relpath(os.path.join(root, d), root_dir)
+	        )]
+	        
+	        for file in files:
+	            file_path = os.path.join(root, file)
+	            relative_path = os.path.relpath(file_path, root_dir)
+	            
+	            self.stats['total_files'] += 1
+	            
+	            if not self.should_include_file(file_path, relative_path):
+	                self.stats['excluded_files'] += 1
+	                continue
+	            
+	            if self.config.get('skipBinary', True) and self.is_binary_file(file_path):
+	                self.stats['binary_files'] += 1
+	                continue
+	            
+	            try:
+	                with open(file_path, 'r', encoding=self.config.get('encoding', 'utf-8')) as input_file:
+	                    content = input_file.read()
+	                
+	                stats = self.get_file_stats(file_path, content)
+	                
+	                # Сохраняем метрики сложности и hotspots
+	                if self.config.get('analyzeComplexity', True):
+	                    self.stats['file_metrics'][relative_path] = stats['complexity']
+	                    self.stats['hotspots'][relative_path] = stats['hotspots']
+	                
+	                # Обновляем общую статистику
+	                self.stats['total_lines'] += stats['metrics']['total_lines']
+	                self.stats['total_size_bytes'] += stats['size']
+	                self.stats['total_tokens'] += stats['tokens']
+	                self.stats['useful_code_percent'] = stats['metrics']['useful_code_percent']  # ← ОБНОВИТЬ
+	                self.stats['empty_lines'] += stats['metrics']['empty_lines']
+	                
+	                # Статистика по языкам
+	                lang = stats['language']
+	                if lang not in self.stats['files_by_language']:
+	                    self.stats['files_by_language'][lang] = 0
+	                self.stats['files_by_language'][lang] += 1
+	                
+	                self.stats['processed_files'] += 1
+	                self.print_file_info(relative_path, stats)
+	                    
+	            except Exception as e:
+	                self.stats['error_files'] += 1
+	                if self.config.get('verbose'):
+	                    print(f"✗ Ошибка: {relative_path} - {e}")
+    
+    def compile_project(self, root_dir='.'):
+        """Компилирует проект в один файл (анализ + объединение)"""
+        self.analyze_project(root_dir)
+        self.split_project(root_dir)
+    
+    def split_project(self, root_dir='.'):
+        """Объединяет файлы проекта в один или несколько файлов"""
+        output_filename = self.config.get('filename')
+        separator_template = self.config.get('separator')
+        encoding = self.config.get('encoding', 'utf-8')
+        
+        file_contents = []
+        
+        print("📦 Объединение файлов...")
+        
+        for root, dirs, files in os.walk(root_dir):
+            dirs[:] = [d for d in dirs if self.should_include_file(
+                os.path.join(root, d), 
+                os.path.relpath(os.path.join(root, d), root_dir)
+            )]
+            
+            for file in files:
+                file_path = os.path.join(root, file)
+                relative_path = os.path.relpath(file_path, root_dir)
+                
+                if not self.should_include_file(file_path, relative_path):
+                    continue
+                
+                if self.config.get('skipBinary', True) and self.is_binary_file(file_path):
+                    continue
+                
+                separator = separator_template.replace('%path%', relative_path)
+                
+                try:
+                    with open(file_path, 'r', encoding=encoding) as input_file:
+                        content = input_file.read()
+                        content = self.normalize_line_endings(content)
+                    
+                    file_stats = self.get_file_stats(file_path, content)
+                    todo_header = ""
+                    if file_stats['important_comments']:  # ЗАМЕНИЛИ 'todos'
+                        todo_count = len(file_stats['important_comments'])  # ЗАМЕНИЛИ 'todos'
+                        todo_header = f"\n/* ⚠️ Found {todo_count} important comment(s) */\n"
+                    
+                    file_content = separator + todo_header + '\n\n' + content
+                    if content and not content.endswith('\n'):
+                        file_content += '\n'
+                    
+                    file_contents.append(file_content)
+                        
+                except Exception as e:
+                    error_msg = f"{separator}\n\n/* ERROR reading {relative_path}: {str(e)} */\n"
+                    file_contents.append(error_msg)
+        
+        if not file_contents:
+            print("Не найдено файлов для обработки!")
+            return
+        
+        full_content = '\n\n'.join(file_contents)
+        parts = self.split_into_parts(full_content)
+        
+        if len(parts) == 1:
+            with open(output_filename, 'w', encoding=encoding) as output_file:
+                self.write_header(output_file)
+                output_file.write(parts[0])
+            print(f"📄 Создан файл: {output_filename}")
+        else:
+            base_name = Path(output_filename).stem
+            extension = Path(output_filename).suffix
+            
+            for i, part_content in enumerate(parts, 1):
+                part_filename = f"{base_name}_part{i}{extension}"
+                with open(part_filename, 'w', encoding=encoding) as output_file:
+                    part_info = {'current': i, 'total': len(parts)}
+                    self.write_header(output_file, part_info)
+                    output_file.write(part_content)
+                
+                part_size = len(part_content)
+                part_lines = len(part_content.splitlines())
+                print(f"📄 Создан файл: {part_filename} ({part_size:,} символов, {part_lines:,} строк)")
+        
+        if self.config.get('scanTodos', True):
+            self.print_todo_summary()
+    
+    def clean_project(self, root_dir='.'):
+        """Очищает проект от комментариев, сохраняя TODO"""
+        print("🧹 Очистка проекта от комментариев...")
+        
+        output_filename = self.config.get('filename', 'cleaned_project.txt')
+        separator_template = self.config.get('separator')
+        encoding = self.config.get('encoding', 'utf-8')
+        
+        file_contents = []
+        
+        for root, dirs, files in os.walk(root_dir):
+            dirs[:] = [d for d in dirs if self.should_include_file(
+                os.path.join(root, d), 
+                os.path.relpath(os.path.join(root, d), root_dir)
+            )]
+            
+            for file in files:
+                file_path = os.path.join(root, file)
+                relative_path = os.path.relpath(file_path, root_dir)
+                
+                if not self.should_include_file(file_path, relative_path):
+                    continue
+                
+                if self.config.get('skipBinary', True) and self.is_binary_file(file_path):
+                    continue
+                
+                separator = separator_template.replace('%path%', relative_path)
+                
+                try:
+                    with open(file_path, 'r', encoding=encoding) as input_file:
+                        content = input_file.read()
+                    
+                    cleaned_content = self.clean_comments(content, file_path)
+                    cleaned_content = self.normalize_line_endings(cleaned_content)
+                    
+                    file_content = separator + '\n\n' + cleaned_content
+                    if cleaned_content and not cleaned_content.endswith('\n'):
+                        file_content += '\n'
+                    
+                    file_contents.append(file_content)
+                    
+                    if self.config.get('verbose'):
+                        original_size = len(content)
+                        cleaned_size = len(cleaned_content)
+                        reduction = ((original_size - cleaned_size) / original_size) * 100
+                        print(f"🧹 {relative_path} - очищено {reduction:.1f}%")
+                        
+                except Exception as e:
+                    error_msg = f"{separator}\n\n/* ERROR cleaning {relative_path}: {str(e)} */\n"
+                    file_contents.append(error_msg)
+        
+        if not file_contents:
+            print("Не найдено файлов для обработки!")
+            return
+        
+        full_content = '\n\n'.join(file_contents)
+        
+        with open(output_filename, 'w', encoding=encoding) as output_file:
+            self.write_header(output_file)
+            output_file.write(full_content)
+        
+        print(f"🧹 Создан очищенный файл: {output_filename}")
+        print(f"🧹 Удалено комментариев: {self.stats['clean_removed_chars']} символов")
+    
+    def print_detailed_statistics(self):
+        """Выводит подробную статистику анализа"""
+        print("\n" + "="*70)
+        print("📊 ДЕТАЛЬНАЯ СТАТИСТИКА ПРОЕКТА")
+        print("="*70)
+        
+        print(f"?? Файлы:")
+        print(f"  Всего найдено: {self.stats['total_files']:,}")
+        print(f"  Обработано: {self.stats['processed_files']:,} ({self.get_processed_percentage():.1f}%)")
+        print(f"  Исключено: {self.stats['excluded_files']:,}")
+        print(f"  Бинарных: {self.stats['binary_files']:,}")
+        print(f"  С ошибками: {self.stats['error_files']:,}")
+        
+        print(f"\n📏 Размеры:")
+        size_kb = self.stats['total_size_bytes'] / 1024
+        size_mb = self.stats['total_size_bytes'] / (1024 * 1024)
+        print(f"  Общий размер: {self.stats['total_size_bytes']:,} байт ({size_kb:,.1f} KB / {size_mb:.2f} MB)")
+        print(f"  Всего строк: {self.stats['total_lines']:,}")
+        print(f"  Токенов: ~{self.stats['total_tokens']:,}")
+        
+        print(f"\n💻 Распределение кода:")
+        print(f"  Полезного кода: {self.stats['useful_code_percent']:.1f}%")
+        print(f"  Пустых строк: {self.get_empty_line_percentage():.1f}%")
+        
+        print(f"\n⚠️  Проблемные места:")
+        todo_count = sum(1 for todo in self.stats['all_todos'] if 'TODO' in todo['type'])
+        improvement_count = sum(1 for todo in self.stats['all_todos'] if 'IMPROVEMENT' in todo['type'])
+        print(f"  TODO комментариев: {todo_count}")
+        print(f"  Предложений по улучшению: {improvement_count}")
+        
+        if self.stats['files_by_language']:
+            print(f"\n🌐 Языки программирования:")
+            for lang, count in sorted(self.stats['files_by_language'].items(), key=lambda x: x[1], reverse=True):
+                percentage = (count / self.stats['processed_files']) * 100
+                print(f"  {lang}: {count} файлов ({percentage:.1f}%)")
+        
+        # Метрики качества
+        self.print_quality_metrics()
+        
+        print("="*70)
+        
+    def get_processed_percentage(self):
+        """Возвращает процент обработанных файлов"""
+        if self.stats['total_files'] == 0:
+            return 0
+        return (self.stats['processed_files'] / self.stats['total_files']) * 100
+    
+    def get_code_percentage(self):
+        """Возвращает процент кода"""
+        if self.stats['total_lines'] == 0:
+            return 0
+        return (self.stats['code_lines'] / self.stats['total_lines']) * 100
+    
+    def get_empty_line_percentage(self):
+        """Возвращает процент пустых строк"""
+        if self.stats['total_lines'] == 0:
+            return 0
+        return (self.stats['empty_lines'] / self.stats['total_lines']) * 100
+        
+    def analyze_dependencies(self, content, file_path):
+        """Анализирует зависимости файла (универсально)"""
+        dependencies = {
+            'imports': [],
+            'internal_deps': [],
+            'external_deps': []
+        }
+        
+        language = self.detect_language(file_path)
+        
+        try:
+            if language == 'java':
+                # Импорты Java
+                import_pattern = r'import\s+([\w\.]+)\s*;'
+                imports = re.findall(import_pattern, content)
+                dependencies['imports'] = imports
+                
+                # Внутренние зависимости (другие классы проекта)
+                class_ref_pattern = r'new\s+(\w+)\s*\('
+                class_refs = re.findall(class_ref_pattern, content)
+                dependencies['internal_deps'] = list(set(class_refs))
+                
+            elif language == 'python':
+                # Анализ AST Python для импортов
+                try:
+                    tree = ast.parse(content)
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.Import):
+                            for alias in node.names:
+                                dependencies['imports'].append(alias.name)
+                        elif isinstance(node, ast.ImportFrom):
+                            if node.module:
+                                dependencies['imports'].append(node.module)
+                except:
+                    # Fallback: regex для Python
+                    import_pattern = r'^(?:from\s+(\w+)\s+import|import\s+([\w\s,]+))'
+                    imports = re.findall(import_pattern, content, re.MULTILINE)
+                    for imp in imports:
+                        dependencies['imports'].extend([x for x in imp if x])
+            
+            # Разделяем на внутренние/внешние зависимости
+            dependencies['external_deps'] = [dep for dep in dependencies['imports'] 
+                                           if not any(proj_keyword in dep.lower() 
+                                           for proj_keyword in ['com.kaleert', 'xbot'])]
+            
+        except Exception as e:
+            if self.config.get('verbose'):
+                print(f"Ошибка анализа зависимостей {file_path}: {e}")
+        
+        return dependencies
+	
+    def find_duplicate_code(self, content, file_path):
+        """Находит потенциально дублирующийся код (универсально)"""
+        duplicates = []
+        language = self.detect_language(file_path)
+        
+        try:
+            lines = content.split('\n')
+            code_blocks = {}
+            
+            # Собираем блоки кода (между { и } для Java/C-like языков)
+            if language in ['java', 'javascript', 'cpp', 'c']:
+                brace_count = 0
+                current_block = []
+                block_start = 0
+                
+                for i, line in enumerate(lines):
+                    stripped = line.strip()
+                    
+                    if '{' in stripped:
+                        if brace_count == 0:
+                            block_start = i
+                        brace_count += stripped.count('{')
+                        current_block.append(stripped)
+                    
+                    elif '}' in stripped:
+                        brace_count -= stripped.count('}')
+                        current_block.append(stripped)
+                        
+                        if brace_count == 0 and len(current_block) > 3:
+                            # Сохраняем блок (игнорируем пустые строки и короткие блоки)
+                            block_content = '\n'.join([l for l in current_block if l])
+                            if len(block_content) > 50:  # Только значимые блоки
+                                key = hash(block_content)
+                                if key in code_blocks:
+                                    duplicates.append({
+                                        'block': block_content,
+                                        'locations': [block_start, i],
+                                        'duplicate_of': code_blocks[key]['locations'][0]
+                                    })
+                                else:
+                                    code_blocks[key] = {
+                                        'content': block_content,
+                                        'locations': [block_start, i]
+                                    }
+                            current_block = []
+            
+            # Для Python ищем повторяющиеся функции
+            elif language == 'python':
+                function_pattern = r'def\s+(\w+)\s*\([^)]*\):'
+                functions = list(re.finditer(function_pattern, content))
+                
+                for i, func1 in enumerate(functions):
+                    for func2 in functions[i+1:]:
+                        # Сравниваем сигнатуры функций
+                        if func1.group(1) == func2.group(1):
+                            duplicates.append({
+                                'type': 'duplicate_function',
+                                'name': func1.group(1),
+                                'locations': [func1.start(), func2.start()]
+                            })
+            
+        except Exception as e:
+            if self.config.get('verbose'):
+                print(f"Ошибка поиска дубликатов {file_path}: {e}")
+        
+        return duplicates
+	
+    def check_code_style(self, content, file_path):
+        """Проверяет code style (универсально)"""
+        style_issues = []
+        language = self.detect_language(file_path)
+        
+        lines = content.split('\n')
+        
+        for i, line in enumerate(lines, 1):
+            stripped = line.rstrip()
+            
+            # Проверка trailing whitespace
+            if line != stripped and stripped:
+                style_issues.append({
+                    'line': i,
+                    'issue': 'Trailing whitespace',
+                    'severity': 'low'
+                })
+            
+            # Проверка длины строки
+            if len(line) > 120:
+                style_issues.append({
+                    'line': i, 
+                    'issue': f'Line too long ({len(line)} characters)',
+                    'severity': 'medium'
+                })
+            
+            # Языко-специфичные проверки
+            if language == 'java':
+                # Проверка фигурных скобок в Java
+                if stripped and stripped.endswith('{') and not stripped.startswith('//'):
+                    # Проверяем отступ перед {
+                    if not re.match(r'^\s*.+\s*\{$', stripped):
+                        style_issues.append({
+                            'line': i,
+                            'issue': 'Curly brace should be on the same line',
+                            'severity': 'low'
+                        })
+            
+            elif language == 'python':
+                # Проверка табов vs пробелов в Python
+                if '\t' in line:
+                    style_issues.append({
+                        'line': i,
+                        'issue': 'Use spaces instead of tabs',
+                        'severity': 'medium'
+                    })
+        
+        return style_issues
+	
+    def analyze_test_coverage(self, file_path):
+        """Анализирует тестовое покрытие (ищет тестовые файлы)"""
+        coverage = {
+            'has_tests': False,
+            'test_files': [],
+            'coverage_estimate': 0
+        }
+        
+        # Ищем соответствующие тестовые файлы
+        file_dir = os.path.dirname(file_path)
+        file_name = os.path.basename(file_path)
+        file_base = os.path.splitext(file_name)[0]
+        
+        # Паттерны тестовых файлов для разных языков
+        test_patterns = {
+            'java': [f'**/test/**/*Test.java', f'**/*Test.java', f'**/{file_base}Test.java'],
+            'python': [f'**/test_**.py', f'**/*_test.py', f'test_{file_base}.py'],
+            'javascript': [f'**/*.test.js', f'**/*.spec.js', f'**/test/**/*.js']
+        }
+        
+        language = self.detect_language(file_path)
+        patterns = test_patterns.get(language, [])
+        
+        for pattern in patterns:
+            test_files = glob.glob(pattern, root_dir=file_dir, recursive=True)
+            coverage['test_files'].extend(test_files)
+        
+        coverage['has_tests'] = len(coverage['test_files']) > 0
+        
+        # Оценочное покрытие (очень приблизительно)
+        if coverage['has_tests']:
+            coverage['coverage_estimate'] = 70  # Базовая оценка если есть тесты
+        else:
+            coverage['coverage_estimate'] = 0
+        
+        return coverage
+	
+    def export_complex_methods(self):
+        """Экспортирует сложные методы в отдельный файл"""
+        complex_methods = []
+        
+        for file_path, metrics in self.stats.get('file_metrics', {}).items():
+            for method in metrics.get('complex_methods', []):
+                complex_methods.append({
+                    'file': file_path,
+                    'method': method['name'],
+                    'lines': method['lines'],
+                    'start_line': method['start_line']
+                })
+        
+        if complex_methods:
+            with open('complex_methods_report.txt', 'w', encoding='utf-8') as f:
+                f.write("🔥 СЛОЖНЫЕ МЕТОДЫ (более 50 строк)\n")
+                f.write("=" * 60 + "\n\n")
+                
+                # Сортируем по количеству строк (самые сложные сначала)
+                complex_methods.sort(key=lambda x: x['lines'], reverse=True)
+                
+                for method in complex_methods:
+                    f.write(f"📁 {method['file']}\n")
+                    f.write(f"   🎯 {method['method']}() - {method['lines']} строк (строка {method['start_line']})\n\n")
+            
+            print(f"📄 Отчёт по сложным методам: complex_methods_report.txt")
+            
+    def find_important_comments(self, content, file_path):
+        """Находит ВСЕ важные комментарии, не только TODO"""
+        language = self.detect_language(file_path)
+        
+        # ПРАВИЛЬНОЕ обращение к comment_patterns
+        comment_patterns = self.todo_patterns.get('comment_patterns', {}).get(language, [])
+        
+        important_comments = []
+        found_signatures = set()
+        
+        for pattern in comment_patterns:
+            try:
+                matches = re.finditer(pattern, content, re.MULTILINE | re.IGNORECASE)
+                for match in matches:
+                    comment_text = match.group().strip()
+                    
+                    # Пропускаем короткие/шаблонные комментарии
+                    if self.is_trivial_comment(comment_text, language):
+                        continue
+                    
+                    # Создаем уникальную сигнатуру
+                    line_num = content[:match.start()].count('\n') + 1
+                    comment_signature = f"{file_path}:{line_num}:{comment_text[:50]}"
+                    
+                    if comment_signature in found_signatures:
+                        continue
+                    found_signatures.add(comment_signature)
+                    
+                    # Определяем тип комментария
+                    comment_type = self.classify_comment(comment_text, language)
+                    
+                    if comment_type != 'TRIVIAL':
+                        important_comments.append({
+                            'type': comment_type,
+                            'text': comment_text,
+                            'line': line_num,
+                            'language': language,
+                            'file': file_path
+                        })
+                        
+            except Exception as e:
+                if self.config.get('verbose'):
+                    print(f"Ошибка поиска комментариев в {file_path}: {e}")
+        
+        return important_comments
+        
+    def is_trivial_comment(self, comment_text, language):
+        """Определяет, является ли комментарий тривиальным"""
+        trivial_patterns = [
+            r'^\s*//\s*\w+\s*$',                    # // variable
+            r'^\s*//\s*[A-Z][a-z]+\s+[A-Z][a-z]+',  # // Getter Setter  
+            r'^\s*//\s*[A-Z][a-z]+$',               # // Constructor
+            r'^\s*//\s*[a-z]+\s*$',                 # // todo
+            r'^\s*/\*\s*\*/$',                      # /** */
+            r'^\s*#\s*\w+\s*$',                     # # variable
+        ]
+        
+        # Слишком короткие комментарии
+        if len(comment_text.strip()) < self.config.get('minCommentLength', 25):
+            return True
+        
+        # Шаблонные комментарии
+        if any(re.match(pattern, comment_text) for pattern in trivial_patterns):
+            return True
+        
+        # Авто-сгенерированные комментарии
+        auto_generated = [
+            'auto-generated', 'automatically generated', 'created by',
+            'this code was generated', '@author', '@version'
+        ]
+        
+        if any(marker in comment_text.lower() for marker in auto_generated):
+            return True
+        
+        return False
+        
+    def is_trivial_comment(self, comment_text, language):
+        """Определяет, является ли комментарий тривиальным"""
+        trivial_patterns = [
+            r'^\s*//\s*\w+\s*$',                    # // variable
+            r'^\s*//\s*[A-Z][a-z]+\s+[A-Z][a-z]+',  # // Getter Setter  
+            r'^\s*//\s*[A-Z][a-z]+$',               # // Constructor
+            r'^\s*//\s*[a-z]+\s*$',                 # // todo
+            r'^\s*/\*\s*\*/$',                      # /** */
+            r'^\s*#\s*\w+\s*$',                     # # variable
+        ]
+        
+        # Слишком короткие комментарии
+        if len(comment_text.strip()) < self.config.get('minCommentLength', 25):
+            return True
+        
+        # Шаблонные комментарии
+        if any(re.match(pattern, comment_text) for pattern in trivial_patterns):
+            return True
+        
+        # Авто-сгенерированные комментарии
+        auto_generated = [
+            'auto-generated', 'automatically generated', 'created by',
+            'this code was generated', '@author', '@version'
+        ]
+        
+        if any(marker in comment_text.lower() for marker in auto_generated):
+            return True
+        
+        return False
+        
+    def get_comment_patterns(self, language):
+        """Возвращает паттерны комментариев для языка"""
+        comment_patterns = {
+            'java': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'javascript': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'python': [r'#[^\n]*', r'""".*?"""', r"'''.*?'''"],
+            'cpp': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'c': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'html': [r'<!--.*?-->'],
+            'css': [r'/\*[\s\S]*?\*/'],
+            'php': [r'//[^\n]*', r'#[^\n]*', r'/\*[\s\S]*?\*/'],
+            'ruby': [r'#[^\n]*', r'=begin[\s\S]*?=end'],
+            'go': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'rust': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'swift': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'kotlin': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'groovy': [r'//[^\n]*', r'/\*[\s\S]*?\*/'],
+            'unknown': [r'//[^\n]*', r'/\*[\s\S]*?\*/', r'#[^\n]*']  # fallback
+        }
+        return comment_patterns.get(language, comment_patterns['unknown'])
+
+def main():
+    parser = argparse.ArgumentParser(description='CodeAnalyzer - Анализ и объединение исходного кода')
+    parser.add_argument('mode', nargs='?', default='compile', 
+                       choices=['analyze', 'compile', 'split', 'clean', 'metrics'],
+                       help='Режим работы: analyze (только анализ), compile (анализ + объединение), split (только объединение), clean (очистка комментариев), metrics (только метрики)')
+    parser.add_argument('--config', '-c', default='analyzer.yml',
+                       help='Путь к файлу конфигурации')
+    parser.add_argument('--dir', '-d', default='.',
+                       help='Директория для анализа')
+    
+    args = parser.parse_args()
+    
+    try:
+        analyzer = CodeAnalyzer(args.config)
+        
+        if args.mode == 'analyze':
+            analyzer.analyze_project(args.dir)
+            analyzer.print_detailed_statistics()
+        elif args.mode == 'compile':
+            analyzer.compile_project(args.dir)
+            analyzer.print_detailed_statistics()
+        elif args.mode == 'split':
+            analyzer.split_project(args.dir)
+            analyzer.print_detailed_statistics()
+        elif args.mode == 'clean':
+            analyzer.clean_project(args.dir)
+        elif args.mode == 'metrics':
+            analyzer.analyze_project(args.dir)
+            analyzer.print_quality_metrics()
+        
+    except Exception as e:
+        print(f"❌ Критическая ошибка: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+

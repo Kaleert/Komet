@@ -1,0 +1,303 @@
+# CodeAnalyzer Configuration
+exclude:
+  - "TZ.txt"
+  - "important_comments.txt"
+  - "complex_methods_report.txt"
+  - ".git/**"
+  - "code_analiz"
+  - "analyzer.yml"
+  - "proxy/**"
+  - "*.txt"
+
+  - "gradlew**"
+  - "extensions/vscode/out/**"
+  - "extensions/vscode/node_modules/**"
+  - "build/**"
+  - ".gradle/**"
+  - "gradle/**"
+  - "src/main/antlr/.antlr/**"
+  - ".meww/**"
+  - "bin/**"
+
+  #Aistudio
+  - "Aistudio/**"
+  - "Aistudio/split.txt"
+  - "Aistudio/complex_methods_report.txt"
+  - "Aistudio/build/**"
+  - "Aistudio/app/build/**"
+  - "Aistudio/.gradle/**"
+  #birthday-site
+  - "birthday-site/**"
+  - "birthday-site/dist/**"
+  - "birthday-site/node_modules/**"
+  - "birthday-site/analyzer.yml"
+  - "birthday-site/code_analiz"
+  - "birthday-site/important_comments.txt"
+  - "birthday-site/package-lock.json"
+  - "birthday-site/split-bdsite.txt"
+  #checkers-ai
+  - "checkers-ai/**"
+  - "checkers-ai/analyzer.yml"
+  - "checkers-ai/code_analiz"
+  - "checkers-ai/split-checkersAI.txt"
+  - "checkers-ai/important_comments.txt"
+  #java-proxy-server
+  - "java-proxy-server/**"
+  - "java-proxy-server/analyzer.yml"
+  - "java-proxy-server/code_analiz"
+  - "java-proxy-server/important_comments.txt"
+  - "java-proxy-server/proxy_check.log"
+  - "java-proxy-server/split-proxy.txt"
+  - "java-proxy-server/.gradle/**"
+  - "java-proxy-server/build/**"
+  - "java-proxy-server/src/main/resources/public/assets/**"
+  #kid
+  - "kid/**"
+  - "kid/package-lock.json"
+  - "kid/auth-client/node_modules/**"
+  - "kid/auth-client/package-lock.json"
+  - "kid/auth-client-temp/**"
+  - "kid/backend/.gradle/**"
+  - "kid/backend/build/**"
+  - "kid/backend/gradle/**"
+  - "kid/backend/gradlew**"
+  #KSpace
+  - "KSpace/**"
+  - "KSpace/kaleert-sso/.gradle/**"
+  - "KSpace/kaleert-sso/gradle/**"
+  - "KSpace/kaleert-sso/build/**"
+  - "KSpace/kaleert-sso/gradlew**"
+  - "KSpace/*.txt"
+  - "KSpace/analyzer.yml"
+  - "KSpace/code_analiz"
+  #mail-server
+  - "mail-server/**"
+  - "mail-server/analyzer.yml"
+  - "mail-server/code_analiz"
+  - "mail-server/config.yml"
+  - "mail-server/*.txt"
+  - "mail-server/mail-db.sql"
+  - "mail-server/gradle/**"
+  - "mail-server/.gradle/**"
+  - "mail-server/frontend/dist/**"
+  - "mail-server/frontend/node_modules/**"
+  - "mail-server/frontend/package-lock.json"
+  - "mail-server/frontend/README.md"
+  - "mail-server/src/main/resources/static/assets/**"
+  #telegram (root)
+  - "telegram/.git/**"
+  - "telegram/*.yml"
+  - "telegram/*.txt"
+  - "telegram/*.py"
+  - "telegram/code_analiz"
+  - "telegram/lang/**" #single file
+  #telegram (example)
+  - "telegram/example/**"
+  - "telegram/example/gradlew*"
+  - "telegram/example/gradle/**"
+  - "telegram/example/.gradle/**"
+  - "telegram/example/build/**"
+  #telegram (music-bot)
+  - "telegram/music-bot/**"
+  - "telegram/music-bot/gradlew*"
+  - "telegram/music-bot/config.yml"
+  - "telegram/music-bot/music-bot_backup.sql"
+  - "telegram/music-bot/gradle/**"
+  - "telegram/music-bot/.gradle/**"
+  - "telegram/music-bot/build/**"
+  - "telegram/music-bot/.git/**"
+  - "telegram/music-bot/LICENSE"
+  #telegram (nyagram)
+  - "telegram/nyagram/**"
+  - "telegram/nyagram/.git/**"
+  - "telegram/nyagram/.gradle-local/**"
+  - "telegram/nyagram/.gradle/**"
+  - "telegram/nyagram/gradle/**"
+  - "telegram/nyagram/build/**"
+  - "telegram/nyagram/.git/**"
+  - "telegram/nyagram/.guthub/**"
+  - "telegram/nyagram/settings.gradle"
+  - "telegram/nyagram/secring.gpg"
+  - "telegram/nyagram/gradlew*"
+  - "telegram/nyagram-corrupt/**"
+  - "telegram/nyagram2/**"
+  
+  - "telegram/nyagram-1.2.1-(indev)/**"
+  - "telegram/nyagram-1.2.1-(indev)/.git/**"
+  - "telegram/nyagram-1.2.1-(indev)/.gradle-local/**"
+  - "telegram/nyagram-1.2.1-(indev)/.gradle/**"
+  - "telegram/nyagram-1.2.1-(indev)/gradle/**"
+  - "telegram/nyagram-1.2.1-(indev)/build/**"
+  - "telegram/nyagram-1.2.1-(indev)/.git/**"
+  - "telegram/nyagram-1.2.1-(indev)/.guthub/**"
+  - "telegram/nyagram-1.2.1-(indev)/settings.gradle"
+  - "telegram/nyagram-1.2.1-(indev)/secring.gpg"
+  - "telegram/nyagram-1.2.1-(indev)/gradlew*"
+  #telegram (nyagram-docs)
+  - "nyagram-docs/**"
+  - "telegram/nyagram-docs/**"
+  - "telegram/nyagram-docs/.git*/**"
+  - "telegram/nyagram-docs/dist/**"
+  - "telegram/nyagram-docs/LICENSE"
+  - "telegram/nyagram-docs/package-lock.json"
+  - "telegram/nyagram-docs/node_modules/**"
+  - "telegram/nyagram-docs/public/data/api.yaml"
+  
+  - "nyagram-docs/.git*/**"
+  - "nyagram-docs/dist/**"
+  - "nyagram-docs/LICENSE"
+  - "nyagram-docs/package-lock.json"
+  - "nyagram-docs/node_modules/**"
+  - "nyagram-docs/public/data/api.yaml"
+  #telegram (nyagram-example)
+  - "telegram/nyagram-example/**"
+  - "telegram/nyagram-example/.git*/**"
+  - "telegram/nyagram-example/gradle/**"
+  -  "telegram/nyagram-example/.gradle/**"
+  -  "telegram/nyagram-example/build/**"
+  -  "telegram/nyagram-example/LICENSE"
+  -  "telegram/nyagram-example/gradlew*"
+  #telegram (uwubot [schedule])
+  #- "telegram/uwubot/**"
+  - "telegram/uwubot/.git/**"
+  - "telegram/uwubot/.gradle/**"
+  - "telegram/uwubot/gradle/**"
+  - "telegram/uwubot/build/**"
+  - "telegram/uwubot/a*"
+  - "telegram/uwubot/code_analiz"
+  - "telegram/uwubot/*.txt"
+  - "telegram/uwubot/config.yml"
+  - "telegram/uwubot/gradlew*"
+  - "telegram/uwubot/LICENSE"
+  - "telegram/uwubot/*.jar"
+  #telegram (waydev)
+  - "telegram/waydev/**" #ПОТОМ ВКЛЮЧИТЬ ОБРАТНО
+  - "telegram/waydev/.git/**"
+  - "telegram/waydev/.gradle/**"
+  - "telegram/waydev/.gradle-local/**" 
+  - "telegram/waydev/gradle/**"
+  - "telegram/waydev/build/**"
+  - "telegram/waydev/a*"
+  - "telegram/waydev/code_analiz"
+  - "telegram/waydev/*.txt"
+  - "telegram/waydev/config.yml"
+  - "telegram/waydev/gradlew*"
+  - "telegram/waydev/LICENSE"
+  - "telegram/yepdownload/**"
+  #telegram (xbot [старый, новый с ющерботом был, авто созданием и настройкой групп и т.д]}
+  - "telegram/xbot/**"
+  - "telegram/xbot/gradlew.bat"
+  - "telegram/xbot/oldSrc/**"
+  #telegram (other)
+  - "telegram/oldSrc/**"
+  - "telegram/test/**"
+  #termux-ide
+  - "termux-ide/**"
+  - "termux-ide/*.txt"
+  - "termux-ide/package-lock.json"
+  - "termux-ide/node_modules/**"
+  - "termux-ide/code_analiz"
+  - "termux-ide/client/dist/**"
+  - "termux-ide/client/node_modules/**"
+  - "termux-ide/client/package-lock.json"
+  #ttai
+  - "ttai/**"
+  # - all
+  #UProxy
+  - "UProxy/**"
+  - "UProxy/*.java"
+  - "UProxy/*.txt"
+  - "UProxy/*.yml"
+  - "UProxy/test.py"
+  - "UProxy/code_analiz"
+  - "UProxy/.gradle/**"
+  - "UProxy/build/**"
+  - "UProxy/proxy-panel/dist/**"
+  - "UProxy/proxy-panel/node_modules/**"
+  - "UProxy/proxy-panel/package-lock.json"
+
+  - "java-stt/**"
+  
+    #telegram (vpnka)
+  - "telegram/vpnka/**"
+  - "telegram/vpnka/vpn-web/**"
+  - "telegam/vpnka/vpn-web/README.md"
+  - "telegram/vpnka/vpn-web/dist/**"
+  - "telegram/vpnka/vpn-web/node_modules/**"
+  - "telegram/vpnka/vpn-web/package-lock.json"
+  - "telegram/vpnka/.git/**"
+  - "telegram/vpnka/.gradle/**"
+  - "telegram/vpnka/gradle/**"
+  - "telegram/vpnka/build/**"
+  - "telegram/vpnka/a*"
+  - "telegram/vpnka/code_analiz"
+  - "telegram/vpnka/*.txt"
+  - "telegram/vpnka/config.yml"
+  - "telegram/vpnka/gradlew*"
+  - "telegram/vpnka/LICENSE"
+  - "telegram/vpnka/*.jar"
+
+  - "telegram/vpnka-test/**"
+  - "telegram/vpnka-test/vpn-web/**"
+  - "telegam/vpnka-test/vpn-web/README.md"
+  - "telegram/vpnka-test/vpn-web/dist/**"
+  - "telegram/vpnka-test/vpn-web/node_modules/**"
+  - "telegram/vpnka-test/vpn-web/package-lock.json"
+  - "telegram/vpnka-test/.git/**"
+  - "telegram/vpnka-test/.gradle/**"
+  - "telegram/vpnka-test/gradle/**"
+  - "telegram/vpnka-test/build/**"
+  - "telegram/vpnka-test/a*"
+  - "telegram/vpnka-test/code_analiz"
+  - "telegram/vpnka-test/*.txt"
+  - "telegram/vpnka-test/config.yml"
+  - "telegram/vpnka-test/gradlew*"
+  - "telegram/vpnka-test/LICENSE"
+  - "telegram/vpnka-test/*.jar"
+  - "telegram/challenge/**"
+  - "yepid/**"
+  - "telegram/yepdownload/**"
+
+  - "windows/**"
+  - "ios/**"
+  - "macos/**"
+  - "test/**"
+  - ".github/**"
+  - "android/**"
+include: {}
+
+filename: "meww-source.txt"
+separator: "/* %path% */"
+skipBinary: true
+encoding: "utf-8"
+
+# Настройки разделения
+splitIntoParts: 1
+# maxTokensPerPart: 32000  # Максимум 32000 токенов на часть
+
+# Максимальный размер файла в МБ (0 = без ограничений)
+maxFileSize: 1
+
+# Фильтрация по расширениям (пустой список = все расширения)
+includeExtensions: {}
+excludeExtensions: {}
+
+# Настройки анализа
+countEmptyLines: true
+showFileStats: true
+addTimestamp: true
+addHeader: true
+lineEndings: "unix"  # preserve, unix, windows
+verbose: true
+
+# Новые настройки для анализа кода
+scanTodos: true
+minCommentLength: 10
+showTodosInStats: true
+analyzeCodeQuality: true
+complexityThreshold: 150
+outputFormat: "text"
+
+analyzeComplexity: true
+findHotspots: true
+techDebtAnalysis: true

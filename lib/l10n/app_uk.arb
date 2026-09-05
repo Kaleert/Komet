@@ -1,0 +1,1220 @@
+{
+  "@@locale": "uk",
+  "loginTitle": "Увійти до Komet",
+  "loginSubtitle": "Перевірте код країни та введіть ваш\nномер телефону.",
+  "loginCountry": "Країна",
+  "loginPhoneNumber": "Номер телефону",
+  "loginOtherSignInMethods": "Інші способи входу",
+  "loginTermsIntro": "Продовжуючи, ви погоджуєтеся з \n",
+  "loginTermsLink": "умовами використання",
+  "loginTermsOfUse": "Умови використання",
+  "loginConfirmPhoneTitle": "Це правильний номер?",
+  "loginEdit": "Змінити",
+  "loginDone": "Готово",
+  "loginSpoofRedacted": "Маскування",
+  "loginProxy": "Проксі",
+  "loginChangeServer": "Змінити сервер",
+  "serverSettingsTitle": "Сервер",
+  "serverHostLabel": "Хост",
+  "serverPortLabel": "Порт",
+  "serverTrustMincifryTitle": "Довіряти сертифікатам Мінцифри",
+  "serverTrustMincifrySubtitle": "Необхідно для api2.oneme.ru: його ланцюжок сертифікатів веде до Russian Trusted Root CA, якого немає в стандартному сховищі. Кореневий сертифікат вбудовано в застосунок; інші хости використовують звичайні сертифікати.",
+  "serverApply": "Застосувати та перепідключитися",
+  "serverUseDefault": "Скинути до стандартних",
+  "serverInvalidHostOrPort": "Введіть коректний хост і порт (1–65535)",
+  "serverSettingsSaved": "Налаштування сервера успішно застосовано",
+  "serverReconnectFailed": "Не вдалося підключитися до сервера",
+  "loginSignInWithQr": "Увійти за QR-кодом",
+  "loginSignInWithToken": "Увійти за токеном",
+  "tokenLoginTitle": "Вхід за токеном",
+  "tokenLoginTokenLabel": "Токен",
+  "tokenLoginNote": "Вхід за токеном працює лише з маскуванням (spoofing). Вкажіть дані пристрою, якому належить токен, інакше акаунт може отримати бан.",
+  "tokenLoginButton": "Увійти",
+  "tokenLoginError": "Заповніть токен, назву пристрою, версію ОС та Device ID",
+  "tokenLoginFailed": "Помилка входу",
+  "loginSignInWithSessionFile": "Увійти через файл сесії",
+  "loginLanguage": "Мова",
+  "languageNameRu": "Русский",
+  "languageNameEn": "English",
+  "languageNameUk": "Українська",
+  "selectCountryTitle": "Оберіть країну",
+  "selectCountrySearchHint": "Пошук країн…",
+  "codeConfirmationSmsSent": "Ми надіслали SMS з кодом підтвердження на ваш номер телефону.",
+  "codeResendInSeconds": "Надіслати знову через {seconds} с.",
+  "@codeResendInSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "codeResendSms": "Надіслати код через SMS знову",
+  "codeError2faMissing": "Помилка: відсутні дані для 2FA",
+  "codeConfirmation2faWarning": "Для входу MAX може вимагати 2FA на вашому акаунті. Якщо ви не отримали код, налаштуйте 2FA з клієнта, де ви вже авторизовані.",
+  "proxySettingsTitle": "Проксі",
+  "proxyTypeNone": "Вимкнено",
+  "proxyTypeSocks5": "SOCKS5",
+  "proxyTypeHttp": "HTTP(S)",
+  "proxyHostLabel": "Хост проксі",
+  "proxyPortLabel": "Порт проксі",
+  "proxyUsernameLabel": "Ім'я користувача (необов'язково)",
+  "proxyPasswordLabel": "Пароль (необов'язково)",
+  "proxyApply": "Застосувати та перепідключитися",
+  "proxyDisable": "Вимкнути проксі",
+  "proxySettingsSaved": "Налаштування проксі застосовано",
+  "proxyInvalidHostOrPort": "Введіть коректний хост і порт проксі (1–65535)",
+  "spoofScreenTitle": "Маскування сесії",
+  "spoofEnableTitle": "Маскування пристрою (Spoofing)",
+  "spoofEnableSubtitleOn": "Увімкнено для цього акаунта",
+  "spoofEnableSubtitleOff": "Вимкнено — використовується реальний пристрій",
+  "spoofInfoHint": "Натисніть \"Згенерувати\":\n• Коротке натискання: випадковий пресет.\n• Довге натискання: дані реального пристрою.",
+  "spoofMethodTitle": "Метод маскування",
+  "spoofMethodPartial": "Частковий",
+  "spoofMethodFull": "Повний",
+  "spoofMethodPartialDescription": "Рекомендований метод. Використовуються випадкові дані, але зберігаються ваші реальні часовий пояс та локаль для правдоподібності.",
+  "spoofMethodFullDescription": "Усі дані, включаючи часовий пояс та локаль, генеруються випадково. Використовуйте цей метод на свій страх і ризик!",
+  "spoofDeviceTypeTitle": "Тип пристрою",
+  "spoofDeviceTypeDescription": "Визначає, які пристрої генеруватимуться: Android чи iOS",
+  "spoofDeviceTypeLabel": "Тип пристрою",
+  "spoofMainSectionTitle": "Основні дані",
+  "spoofFieldDeviceName": "Назва пристрою",
+  "spoofFieldOsVersion": "Версія ОС",
+  "spoofRegionalSectionTitle": "Регіональні дані",
+  "spoofFieldScreen": "Роздільна здатність екрана",
+  "spoofFieldTimezone": "Часовий пояс",
+  "spoofFieldLocale": "Локаль",
+  "spoofFieldDeviceLocale": "Локаль пристрою (похідна)",
+  "spoofIdentifiersSectionTitle": "Ідентифікатори",
+  "spoofIdentifiersDescription": "mt_instanceid та clientSessionId генеруються автоматично при кожному запуску додатка. Змінити можна лише Device ID.",
+  "spoofFieldInstanceId": "mt_instanceid",
+  "spoofFieldClientSessionId": "clientSessionId",
+  "spoofFieldPushDeviceType": "Тип пристрою для Push",
+  "spoofFieldDeviceId": "Device ID",
+  "spoofRegenerateIdTooltip": "Згенерувати новий ID",
+  "spoofFieldAppVersion": "Версія застосунку",
+  "spoofFieldBuildNumber": "Номер збірки",
+  "spoofFieldArchitecture": "Архітектура",
+  "spoofButtonGenerate": "Згенерувати",
+  "spoofButtonApply": "Застосувати",
+  "spoofDialogUnsureTitle": "Ви впевнені?",
+  "spoofDialogUnsureContent": "Застосунок може працювати нестабільно через несумісність API",
+  "spoofDialogCancel": "Скасувати",
+  "spoofDialogYes": "Так",
+  "spoofDialogApplyTitle": "Застосувати налаштування?",
+  "spoofDialogApplyContent": "Потрібно перепідключити застосунок, згодні?",
+  "spoofDialogApplyWarning": "Ваше маскування зміниться негайно. Але через особливості MAX, щоб зміни стали видимими, потрібно переувійти в акаунт.",
+  "spoofDialogReloginTitle": "Готово!",
+  "spoofDialogReloginContent": "Через особливості MAX ваше маскування змінено, але зміни будуть видимі лише після повторного входу.",
+  "spoofDialogReloginWarning": "Переувійти зараз?",
+  "spoofDialogReloginDeny": "Пізніше",
+  "spoofDialogReloginConfirm": "Переувійти зараз",
+  "spoofDialogApplyDeny": "Ні",
+  "spoofDialogApplyConfirm": "Добре!",
+  "spoofErrorApplyFailed": "Не вдалося застосувати налаштування: {error}",
+  "@spoofErrorApplyFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "profileMenuSpoof": "Маскування",
+  "infoTitle": "Інформація",
+  "infoAccountSection": "Акаунт",
+  "infoPacketSection": "Пакет входу",
+  "infoChatsSection": "Чати у пакеті входу",
+  "infoChatSettingsSection": "Налаштування чатів",
+  "infoServerSection": "Сервер",
+  "infoUserSection": "Користувач",
+  "infoExperimentsSection": "Експерименти",
+  "infoYMapSection": "Y-Map",
+  "infoFileUploadTypes": "file-upload-unsupported-types",
+  "infoWhiteListLinks": "white-list-links",
+  "infoRegistrationTime": "registrationTime",
+  "infoCountry": "country",
+  "infoVideoChatHistory": "videoChatHistory",
+  "infoUpdateTime": "updateTime",
+  "infoId": "id",
+  "infoPhone": "phone",
+  "infoPhotoId": "photoId",
+  "infoAccountStatus": "accountStatus",
+  "infoContactOptions": "contact options",
+  "infoProfileOptions": "profile options",
+  "infoNames": "names",
+  "infoBaseUrl": "baseUrl",
+  "infoBaseRawUrl": "baseRawUrl",
+  "infoChatMarker": "chatMarker",
+  "infoServerTime": "server time",
+  "infoUpdates": "updates",
+  "infoMessagesCount": "повідомлень у пакеті",
+  "infoContactsCount": "контактів у пакеті",
+  "infoPresenceCount": "записи присутності",
+  "infoConfigHash": "config hash",
+  "infoChatsCount": "чатів завантажено",
+  "infoChatsActive": "активних",
+  "infoChatsHidden": "прихованих",
+  "infoChatsDialogs": "діалогів",
+  "infoChatsGroups": "груп",
+  "infoChatsChannels": "каналів",
+  "infoChatsUnread": "непрочитаних чатів",
+  "infoChatsNewMessages": "нових повідомлень",
+  "infoChatsMessages": "повідомлень у завантажених чатах",
+  "infoAccountRemovalEnabled": "account-removal-enabled",
+  "infoImageSize": "image-size",
+  "infoGce": "gce",
+  "infoGcce": "gcce",
+  "infoMaxMsgLength": "max-msg-length",
+  "infoQuotesEnabled": "quotes-enabled",
+  "infoCallsEndpoint": "calls-endpoint",
+  "infoSendLocationEnabled": "send-location-enabled",
+  "infoLgce": "lgce",
+  "infoWud": "wud",
+  "infoVideoMsgEnabled": "video-msg-enabled",
+  "infoGrse": "grse",
+  "infoEditTimeout": "edit-timeout",
+  "infoImageQuality": "image-quality",
+  "infoUnsafeFilesAlert": "unsafe-files-alert",
+  "infoAccountNicknameEnabled": "account-nickname-enabled",
+  "infoMentionsEntityNamesLimit": "mentions_entity_names_limit",
+  "infoReactionsEnabled": "reactions-enabled",
+  "infoTile": "tile",
+  "infoGeocoder": "geocoder",
+  "infoStatic": "static",
+  "chatInfoSubscribers": "підписники:",
+  "chatInfoInvitedBy": "запросив(ла):",
+  "chatInfoLink": "посилання:",
+  "chatInfoOfficial": "офіційний:",
+  "chatInfoComments": "коментарі:",
+  "commentsWrite": "Написати коментар",
+  "commentsTitle": "Коментарі",
+  "commentsCount": "{count, plural, =1{1 коментар} few{{count} коментарі} many{{count} коментарів} other{{count} коментарів}}",
+  "@commentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatInfoAplus": "схвалено Роскомнаглядом:",
+  "chatInfoSignAdmin": "підпис адміна:",
+  "chatInfoLastChanged": "остання зміна:",
+  "chatInfoJoinTime": "ви приєдналися:",
+  "chatInfoCreated": "створено:",
+  "chatInfoTitle": "Інформація",
+  "chatInfoMembers": "учасники:",
+  "chatInfoLastSeen": "був(ла) нещодавно",
+  "chatInfoHasBots": "є боти:",
+  "chatInfoBlockedCount": "заблокованих у групі:",
+  "chatInfoOfficialStatus": "офіційний статус:",
+  "chatInfoJoined": "приєдналися:",
+  "chatInfoGroupCreated": "групу створено:",
+  "chatInfoGroupOwner": "власник групи:",
+  "chatInfoDialogStarted": "діалог розпочато:",
+  "editProfileTitle": "Редагувати профіль",
+  "editProfileSave": "Зберегти",
+  "editProfileFirstName": "Ім'я",
+  "editProfileLastName": "Прізвище",
+  "editProfileRemovePhoto": "Видалити фото",
+  "registrationTitle": "Створіть ваш профіль",
+  "registrationSubtitle": "Додайте своє ім'я та виберіть аватар",
+  "registrationChooseAvatar": "Вибрати аватар",
+  "msgActionsCopy": "Копіювати",
+  "msgActionsSelectAll": "Виділити все",
+  "emojiSearchHint": "Пошук емодзі",
+  "msgActionsEdit": "Редагувати",
+  "msgActionsReply": "Відповісти",
+  "msgActionsForward": "Переслати",
+  "msgActionsMarkUnread": "Позначити як непрочитане",
+  "msgActionsPin": "Закріпити",
+  "msgActionsUnpin": "Відкріпити",
+  "pinnedMessageTitle": "Закріплене повідомлення",
+  "msgActionsEditHistory": "Історія редагувань",
+  "msgActionsReadBy": "Прочитали",
+  "msgActionsReadByEmpty": "Ще ніхто не прочитав",
+  "msgActionsReadByUnknownUser": "Користувач",
+  "msgActionsReport": "Поскаржитися",
+  "msgActionsDelete": "Видалити",
+  "msgActionsCopied": "Скопійовано",
+  "msgActionsLoadReasonsFailed": "Не вдалося завантажити причини",
+  "msgActionsCurrentVersion": "поточна версія",
+  "msgActionsCurrentVersionWithDate": "поточна версія · {date}",
+  "@msgActionsCurrentVersionWithDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "msgActionsNoText": "(немає тексту)",
+  "notificationsSaveFailed": "Не вдалося зберегти: {error}",
+  "@notificationsSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsFkmAlreadyHasFcm": "Навіщо? У вас уже є FCM.",
+  "notificationsFkmIosUnsupported": "Push-сповіщення поки недоступні на iOS.",
+  "notificationsTitle": "Сповіщення",
+  "notificationsFkmSectionTitle": "FKM",
+  "notificationsFkmEnableLabel": "Увімкнути сповіщення",
+  "notificationsFkmEnableSubtitle": "Для роботи сповіщень FKM застосунку потрібно тримати постійне сповіщення в шторці.",
+  "notificationsFkmUnsupported": "FKM працює лише на Android",
+  "notificationsFkmBatteryAction": "Відкрити налаштування",
+  "notificationsFkmBatteryMessage": "Інакше система приспать фонове з'єднання, і сповіщення приходитимуть із затримкою або втрачатимуться.",
+  "notificationsFkmBatteryTitle": "Вимкнути економію заряду?",
+  "notificationsFkmPermissionDenied": "FKM не може працювати без дозволу на сповіщення",
+  "notificationsFkmConfirmAction": "Увімкнути FKM",
+  "notificationsFkmConfirmMessage": "Сповіщення надходитимуть через власне фонове з'єднання застосунку, а в шторці висітиме постійне службове сповіщення. Ви можете вимкнути FKM прямо з нього.",
+  "notificationsMainSectionTitle": "Сповіщення",
+  "notificationsAllLabel": "Усі сповіщення",
+  "notificationsNewSectionTitle": "Нові сповіщення",
+  "notificationsPreviewLabel": "Попередній перегляд",
+  "notificationsSoundLabel": "Звук",
+  "notificationsAdditionalSectionTitle": "Додатково",
+  "notificationsCallsLabel": "Сповіщення про дзвінки",
+  "notificationsNewContactsLabel": "Сповіщення від нових контактів",
+  "notificationsHapticsSectionTitle": "Тактильний відгук",
+  "notificationsHapticsLabel": "Тактильний відгук",
+  "notificationsHapticsSubtitle": "Вібровідгук на дії в застосунку",
+  "devicesLoadFailed": "Не вдалося завантажити: {error}",
+  "@devicesLoadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesQrLinkDialogTitle": "Увійти за QR-кодом",
+  "devicesQrLinkDialogHint": "Вставте вміст QR-коду",
+  "devicesAllTerminated": "Усі сеанси завершено",
+  "devicesGenericError": "Помилка: {error}",
+  "@devicesGenericError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesIpLookupError": "Помилка IP: {error}",
+  "@devicesIpLookupError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesTitle": "Пристрої",
+  "devicesPromoTitle": "Пристрої в KOMET",
+  "devicesPromoSubtitle": "Хто має доступ до вашого акаунта?",
+  "devicesScanQrButton": "Сканувати QR",
+  "devicesCurrentSuffix": " (поточний)",
+  "devicesOnlineStatus": "В мережі",
+  "devicesTerminateOthersButton": "Завершити всі інші сеанси",
+  "devicesMobileNetworkLabel": "Мобільна мережа",
+  "devicesProxyDetectedLabel": "Виявлено Проксі/VPN",
+  "themeSettingsTitle": "Тема",
+  "themeSettingsModeCardTitle": "Режим теми",
+  "themeSettingsModeCardSubtitle": "Світла, темна або автоматичне перемикання",
+  "themeSettingsModeSystem": "Системна",
+  "themeSettingsModeLight": "Світла",
+  "themeSettingsModeDark": "Темна",
+  "themeSettingsModeSchedule": "За розкладом",
+  "themeSettingsAmoledTitle": "AMOLED чорний",
+  "themeSettingsAmoledSubtitle": "Глибокий чорний фон для OLED-екранів",
+  "themeSettingsScheduleTitle": "Розклад",
+  "themeSettingsScheduleSubtitleEnabled": "Коли темна тема вмикається автоматично",
+  "themeSettingsScheduleSubtitleDisabled": "Доступно в режимі \"За розкладом\"",
+  "themeSettingsScheduleDarkFrom": "Темна з",
+  "themeSettingsScheduleLightFrom": "Світла з",
+  "appearanceTitle": "Вигляд",
+  "appearanceVisualStyleTitle": "Візуальний стиль",
+  "appearanceVisualStyleSubtitle": "Material You або об'ємні капсули Glossy",
+  "appearanceStyleAuto": "Підлаштувати під тему",
+  "appearanceVisualStyleMaterialYou": "Material You",
+  "appearanceVisualStyleGlossy": "Глянець",
+  "appearanceVisualStyleLiquidGlass": "Рідке скло",
+  "appearanceGlassMaterial": "Скло",
+  "appearanceChatChromeTitle": "Елементи екрана чату",
+  "appearanceChatChromeSubtitle": "Фон верхньої та нижньої панелей: колір, розмиття або прозорість. З розмиттям чи прозорістю повідомлення прокручуються під панелями",
+  "appearanceChatChromeColor": "Колір",
+  "appearanceChatChromeBlur": "Розмиття",
+  "appearanceChatChromeNone": "Немає",
+  "appearanceChatChromeTransparent": "Матове розмиття",
+  "appearanceComposerTitle": "Рядок введення",
+  "appearanceComposerSubtitle": "Стиль і фон рядка введення повідомлення",
+  "appearanceComposerBackgroundStandard": "Стандартний",
+  "appearanceComposerBackgroundFrost": "Матове розмиття",
+  "appearanceNavPillTitle": "Стиль перемикача",
+  "appearanceNavPillSubtitle": "Перемикач розділів на екрані чатів",
+  "appearanceNavPillGlossy": "Глянець",
+  "appearanceNavPillFrost": "Матове розмиття",
+  "playbackPillAt": "о",
+  "playbackPillYou": "Ви",
+  "appearanceGradientTitle": "Градієнт",
+  "appearanceGradientSubtitle": "Глибина та відблиски в глянцевих капсулах",
+  "appearanceSpectrumTitle": "Спектральний фон",
+  "appearanceSpectrumSubtitle": "Експериментально — живі хвилі під інтерфейсом",
+  "appearanceAccentColorTitle": "Колір акценту",
+  "appearanceAccentColorSystem": "Системний",
+  "appearanceAccentColorSubtitle": "Основний колір інтерфейсу та повідомлень",
+  "appearanceAccentColorSystemActive": "Системний колір активний",
+  "appearanceAccentColorReset": "Скинути до системного",
+  "appearanceBubbleShapeTitle": "Форма повідомлень",
+  "appearanceBubbleShapeSubtitle": "Округлення кутів повідомлень (бубашок)",
+  "appearanceBubbleShapeMobile": "TG Mobile",
+  "appearanceBubbleShapeDesktop": "TG Desktop",
+  "appearanceBubbleBehaviorTitle": "Поведінка повідомлень",
+  "appearanceBubbleBehaviorSubtitle": "Чи змінюється форма повідомлення залежно від сусідніх у групі",
+  "appearanceBubbleBehaviorMutable": "Змінна",
+  "appearanceBubbleBehaviorImmutable": "Незмінна",
+  "appearancePreviewHello": "Привіт!",
+  "appearancePreviewHowIsIt": "Як тобі?",
+  "appearancePreviewHmm": "хмм...",
+  "appearancePreviewNotBad": "А дуже навіть непогано!",
+  "callKometDetectedNotification": "Ця людина використовує Komet! :3",
+  "callStatusConnecting": "З'єднання",
+  "callGroupConnecting": "З'єднання…",
+  "callGroupWaitingParticipants": "Очікування учасників…",
+  "callLinkGroupCall": "Груповий дзвінок",
+  "callLinkSendInMax": "Надіслати у MAX",
+  "callLinkStart": "Почати дзвінок",
+  "callLinkSent": "Посилання надіслано",
+  "callLinkSendFailed": "Не вдалося надіслати посилання",
+  "callLinkCreateFailed": "Не вдалося створити дзвінок",
+  "callParticipantYou": "Ви",
+  "callParticipantFallback": "Учасник",
+  "callTooltipMinimize": "Згорнути",
+  "callTooltipExpand": "Розгорнути",
+  "callTooltipKometHub": "Komet",
+  "callInfoTitle": "Про дзвінок",
+  "callPeerMicOff": "Мікрофон вимкнено",
+  "callPeerCameraOn": "Камеру увімкнено",
+  "callUnknownName": "Невідомий",
+  "callIncoming": "Вхідний дзвінок",
+  "callStatusRinging": "Дзвонимо",
+  "callStatusEnded": "Дзвінок завершено",
+  "callDecline": "Відхилити",
+  "callAccept": "Відповісти",
+  "callSpeaker": "Динамік",
+  "callVideoLabel": "Відео",
+  "callScreenLabel": "Екран",
+  "callUnmute": "Увімкнути звук",
+  "callMute": "Вимкнути звук",
+  "callEndButton": "Завершити",
+  "callCameraUnavailable": "Камера недоступна: {error}",
+  "callTooltipMicrophone": "Мікрофон",
+  "callMicrophoneTitle": "Мікрофон",
+  "callMicrophoneSystem": "Системний",
+  "callMicrophoneEmpty": "Мікрофонів не знайдено",
+  "callMicrophoneRefresh": "Оновити список",
+  "callMicrophoneMonitors": "Монітори — системний звук",
+  "callMicrophoneFallback": "Мікрофон {index}",
+  "callMicrophoneFailed": "Не вдалося перемкнути мікрофон: {error}",
+  "callMicStillLive": "Досі активний",
+  "callNoMuteHint": "--no-mute: звук продовжує передаватися навіть при вимкненому мікрофоні",
+  "callInfoClient": "Клієнт",
+  "callInfoPlatform": "Платформа",
+  "callInfoCountry": "Країна",
+  "callInfoInContacts": "У контактах",
+  "callValueYes": "так",
+  "callValueNo": "ні",
+  "callInfoPeerIp": "IP співрозмовника",
+  "callInfoPeerNetwork": "Мережа співрозмовника",
+  "callInfoPath": "Шлях з'єднання",
+  "callInfoCodec": "Кодек",
+  "callInfoServer": "Сервер",
+  "callInfoTopology": "Топологія",
+  "callInfoStatus": "Статус",
+  "callStatusValueConnected": "з'єднано",
+  "callStatusValueConnecting": "з'єднання…",
+  "callInfoPeerMic": "Мікрофон співрозмовника",
+  "callMicValueOn": "увімкнено",
+  "callMicValueOff": "вимкнено",
+  "callInfoPeerCamera": "Камера співрозмовника",
+  "callCameraValueOn": "увімкнено",
+  "callCameraValueOff": "вимкнено",
+  "callInfoVideoTrack": "Відеодоріжка",
+  "callInfoVideoTrackPresent": "так ({count})",
+  "@callInfoVideoTrackPresent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "callInfoVideoSize": "Роздільна здатність відео",
+  "callInfoFrameRendering": "Рендеринг кадрів",
+  "callBadgeEncrypted": "Зашифровано",
+  "callBadgeAudio": "Аудіо",
+  "callBadgeRecording": "Запис",
+  "callBadgeNoiseSuppression": "Шумозаглушення",
+  "callBadgeAnimoji": "Анімодзі",
+  "callInfoNoDataYet": "Дані з'являться після підключення…",
+  "hubTitleMenu": "Komet",
+  "hubChatPageTitle": "Анонімний чат",
+  "hubGamesTitle": "Ігри",
+  "hubCheckersTitle": "Шашки",
+  "hubChatTileTitle": "Чат",
+  "hubChatTileSubtitle": "Анонімні повідомлення",
+  "hubGamesTileSubtitle": "Зіграйте з партнером",
+  "hubCheckersTileSubtitle": "Російські шашки",
+  "hubMoreSoonTitle": "Більше — скоро…",
+  "hubMoreSoonSubtitle": "У розробці",
+  "hubChatPrivacyNote": "Надсилається безпосередньо через дзвінок, ніде не зберігається",
+  "hubChatEmpty": "Поки немає повідомлень",
+  "hubChatInputHint": "Повідомлення…",
+  "hubCheckersRestart": "Перезапустити",
+  "hubCheckersYouWhite": "Ви граєте білими",
+  "hubCheckersYouBlack": "Ви граєте чорними",
+  "hubCheckersWon": "Ви перемогли 🎉",
+  "hubCheckersLost": "Ви програли",
+  "hubCheckersYourMove": "Ваш хід",
+  "hubCheckersOpponentMove": "Хід супротивника…",
+  "scheduledPickTimeTitle": "Коли надіслати",
+  "scheduledEditTitle": "Редагувати",
+  "scheduledMessageTextHint": "Текст повідомлення",
+  "scheduledSave": "Зберегти",
+  "scheduledEditFailed": "Не вдалося відредагувати повідомлення",
+  "scheduledDeleteConfirmTitle": "Видалити відкладене повідомлення?",
+  "scheduledDeleteConfirmMessage": "Повідомлення не буде надіслано.",
+  "scheduledDeleteConfirmLabel": "Видалити",
+  "scheduledDeleteFailed": "Не вдалося видалити повідомлення",
+  "scheduledAppBarTitle": "Відкладені",
+  "scheduledEmpty": "Немає відкладених повідомлень",
+  "scheduledAttachPhoto": "Фото",
+  "scheduledAttachVideo": "Відео",
+  "scheduledAttachVoice": "Голосове повідомлення",
+  "scheduledAttachFile": "Файл",
+  "scheduledAttachLocation": "Геопозиція",
+  "scheduledAttachForwarded": "Переслане",
+  "scheduledAttachGeneric": "Вкладення",
+  "contactProfileLoadError": "Помилка: {error}",
+  "@contactProfileLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "contactProfileBot": "Бот",
+  "contactProfileOnline": "В мережі",
+  "contactProfileRecentlyActive": "Був(ла) нещодавно",
+  "contactProfileActionChat": "Чат",
+  "contactProfileActionSound": "Звук",
+  "contactProfileActionCall": "Дзвінок",
+  "contactProfileActionAddContact": "Додати контакт",
+  "contactProfileInfoPhone": "Телефон",
+  "contactProfileInfoCountry": "Країна",
+  "contactProfileInfoGender": "Стать",
+  "contactProfileInfoRegistration": "Реєстрація",
+  "contactProfileInfoUpdated": "Оновлено",
+  "contactProfileInfoAccountStatus": "Статус акаунта",
+  "contactProfileInfoDescription": "Опис",
+  "contactProfileInfoLink": "Посилання",
+  "contactProfileInfoFlags": "Прапорці",
+  "nfcPeerNameFallback": "Контакт #{id}",
+  "@nfcPeerNameFallback": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "nfcPeerFirstNameFallback": "Контакт",
+  "nfcContactAdded": "Контакт додано",
+  "nfcAddFailed": "Не вдалося додати: {error}",
+  "@nfcAddFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "nfcReasonBluetoothOff": "Увімкніть Bluetooth і спробуйте знову",
+  "nfcReasonPermission": "Для обміну потрібні дозволи на Bluetooth",
+  "nfcReasonDefault": "Не вдалося встановити з'єднання",
+  "nfcSheetTitle": "Обмін контактами",
+  "nfcUnsupported": "NFC недоступний на цьому пристрої",
+  "nfcDisabled": "Увімкніть NFC у налаштуваннях телефону і спробуйте знову",
+  "nfcScanningTitle": "Піднесіть телефони один до одного",
+  "nfcScanningSubtitle": "Обидва пристрої мають тримати цей екран відкритим",
+  "nfcExchangingTitle": "Обмін контактами…",
+  "nfcExchangingSubtitle": "Майже готово",
+  "nfcPeerIdFallback": "ID {id}",
+  "@nfcPeerIdFallback": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "nfcAdded": "Додано",
+  "nfcAddContact": "Додати контакт",
+  "chatInfoTabGeneralChats": "Спільні чати",
+  "chatInfoTabMedia": "Медіа",
+  "chatInfoTabFiles": "Файли",
+  "chatInfoTabVoice": "Голосові",
+  "chatInfoTabLinks": "Посилання",
+  "chatInfoTabMembers": "Учасники",
+  "chatInfoEmptyGeneralChats": "Немає спільних чатів",
+  "chatInfoEmptyMedia": "Немає медіа",
+  "chatInfoEmptyFiles": "Немає файлів",
+  "chatInfoEmptyVoice": "Немає голосових повідомлень",
+  "chatInfoEmptyLinks": "Немає посилань",
+  "chatInfoOnlineOfTotal": "{online} з {total} в мережі",
+  "@chatInfoOnlineOfTotal": {
+    "placeholders": {
+      "online": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedMembersCount": "{count, plural, =1{1 учасник} few{{count} учасники} many{{count} учасників} other{{count} учасників}}",
+  "@sharedMembersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharedLoadMore": "Показати ще",
+  "sharedGoToMessage": "Перейти до повідомлення",
+  "sharedDownload": "Завантажити",
+  "photoViewerCounter": "Фото {index} з {total}",
+  "@photoViewerCounter": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "photoViewerCounterFile": "ФАЙЛ з {total}",
+  "@photoViewerCounterFile": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "photoViewerSentToday": "{sender} • сьогодні о {time}",
+  "@photoViewerSentToday": {
+    "placeholders": {
+      "sender": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "photoViewerSentOn": "{sender} • {date} о {time}",
+  "@photoViewerSentOn": {
+    "placeholders": {
+      "sender": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "photoViewerSaveAs": "Зберегти як…",
+  "photoViewerViewAll": "Переглянути всі фото",
+  "photoViewerRotate": "Обернути",
+  "mediaViewerCounter": "{index} з {total}",
+  "@mediaViewerCounter": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaViewerViewAll": "Переглянути всі медіа",
+  "videoViewerSettings": "Налаштування",
+  "videoViewerSpeed": "Швидкість",
+  "videoViewerQuality": "Якість",
+  "sharedCopyLink": "Копіювати посилання",
+  "sharedLinkCopied": "Посилання скопійовано",
+  "chatInfoActionLeave": "Покинути",
+  "chatInfoActionMuted": "Без звуку",
+  "chatInfoNotificationsOn": "Сповіщення увімкнені",
+  "chatInfoNotificationsOff": "Сповіщення вимкнені",
+  "chatInfoMenuBlock": "Заблокувати",
+  "chatInfoMenuUnblock": "Розблокувати",
+  "chatInfoMenuDeleteChat": "Видалити чат",
+  "chatInfoMenuClearHistory": "Очистити історію",
+  "chatInfoClearHistoryTitle": "Очистити історію",
+  "chatInfoClearHistoryMessage": "Усі повідомлення в цьому чаті буде назавжди видалено.",
+  "chatInfoClearHistoryForAll": "Для всіх",
+  "chatInfoClearHistoryConfirm": "Очистити",
+  "chatInfoClearHistoryDone": "Історію очищено",
+  "chatInfoDeleteChatTitle": "Видалити чат",
+  "chatInfoDeleteChatMessage": "Чат буде видалено разом з усім листуванням.",
+  "chatInfoDeleteChatConfirm": "Видалити",
+  "chatInfoLeaveGroupTitle": "Покинути групу",
+  "chatInfoLeaveGroupMessage": "Ви більше не будете отримувати повідомлення з цієї групи.",
+  "chatInfoLeaveChannelTitle": "Покинути канал",
+  "chatInfoLeaveChannelMessage": "Ви більше не будете отримувати пости з цього каналу.",
+  "chatInfoLeaveConfirm": "Покинути",
+  "chatInfoLeaveFailed": "Не вдалося покинути чат",
+  "chatInfoCallConfirmTitle": "Почати дзвінок",
+  "chatInfoCallConfirmMessage": "Зателефонувати {name}?",
+  "@chatInfoCallConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatInfoConfirmYes": "Так",
+  "chatInfoConfirmNo": "Ні",
+  "chatInfoCallFailed": "Не вдалося почати дзвінок",
+  "chatInfoBlockConfirmTitle": "Заблокувати",
+  "chatInfoBlockConfirmMessage": "Ви впевнені, що хочете заблокувати {name}?",
+  "@chatInfoBlockConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatInfoBlockDone": "Користувача заблоковано",
+  "chatInfoUnblockDone": "Користувача розблоковано",
+  "chatInfoBlockFailed": "Не вдалося змінити стан блокування",
+  "chatInfoComplaintTitle": "Поскаржитися",
+  "chatInfoComplaintSubtitle": "Оберіть причину скарги",
+  "chatInfoComplaintSend": "Надіслати",
+  "chatInfoComplaintClose": "Закрити",
+  "chatInfoComplaintEmpty": "Не вдалося завантажити причини",
+  "chatInfoComplaintSent": "Скаргу надіслано",
+  "chatInfoComplaintFailed": "Не вдалося надіслати скаргу",
+  "chatInfoActionCancel": "Скасувати",
+  "chatInfoBio": "Про себе",
+  "chatInfoInviteLink": "Посилання-запрошення",
+  "chatInfoCollapse": "Згорнути",
+  "chatInfoShowMore": "Більше",
+  "chatInfoAddMember": "Додати учасника",
+  "chatInfoRoleOwner": "власник",
+  "chatInfoRoleAdmin": "Адмін",
+  "chatInfoMemberDeleted": "Акаунт видалено",
+  "chatInfoInviteByLink": "Запросити за посиланням",
+  "chatInfoInviteLinkHint": "Ви можете запросити будь-кого за цим посиланням",
+  "chatInfoAddMembersAction": "Додати",
+  "chatInfoMembersSearchHint": "Пошук",
+  "chatInfoAddMembersEmpty": "Нікого додати",
+  "chatInfoMembersAdded": "Учасників додано",
+  "chatInfoAddMembersError": "Не вдалося додати учасників",
+  "chatInfoNoData": "Немає даних",
+  "chatInfoHideExtra": "Приховати",
+  "chatInfoShowMoreExtra": "Деталі",
+  "chatSendConfirmMessage": "Надіслати це повідомлення в чат?",
+  "chatSendConfirmAction": "Надіслати",
+  "chatInfoRowDisableForward": "Пересилання вимкнено",
+  "chatInfoRowCopyDisabled": "Копіювання вимкнено",
+  "chatInfoRowOnlyAdminCall": "Телефонувати можуть адміни",
+  "chatInfoRowAllCanPin": "Закріплювати може кожен",
+  "chatInfoRowMembersSeeLink": "Учасники бачать посилання",
+  "chatInfoRowConfirmBeforeSend": "Підтвердження перед відправленням",
+  "chatInfoRowOnlyOwnerIconTitle": "Назву та іконку змінює власник",
+  "chatInfoRowPromotedDisabled": "Реклама вимкнена",
+  "chatInfoRowUserId": "ID користувача",
+  "chatInfoRowId": "ID чату",
+  "chatInfoRowCreated": "Створено",
+  "chatInfoRowModified": "Змінено",
+  "chatInfoRowMembersCount": "Учасники",
+  "chatInfoRowOwner": "Власник",
+  "chatInfoRowCreatedGroup": "Створено",
+  "chatInfoRowJoined": "Приєдналися",
+  "chatInfoRowModifiedGroup": "Змінено",
+  "chatInfoRowHasBots": "Є боти",
+  "chatInfoRowBlockedCount": "Заблоковано",
+  "chatInfoRowOfficialGroup": "Офіційна",
+  "chatInfoRowSignAdmin": "Підпис адміна",
+  "chatInfoRowSubscribersCount": "Підписники",
+  "chatInfoRowOfficialChannel": "Офіційний",
+  "chatInfoRowComments": "Коментарі",
+  "chatInfoRowRkn": "Схвалено Роскомнаглядом",
+  "chatInfoRowOnlyAdmin": "Тільки адміни",
+  "securityTitle": "Безпека",
+  "securityLoadError": "Помилка завантаження: {error}",
+  "@securityLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "securitySaveError": "Помилка збереження: {error}",
+  "@securitySaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "securityPrivacyAll": "Усі",
+  "securityPrivacyContacts": "Мої контакти",
+  "securityPrivacyNobody": "Ніхто",
+  "securityFamilyProtection": "Сімейний захист",
+  "securityEnabledFem": "Увімкнена",
+  "securityDisabledFem": "Вимкнена",
+  "securityPasswordTitle": "Пароль для входу",
+  "securityEnabledMasc": "Увімкнено",
+  "securityDisabledMasc": "Вимкнено",
+  "securityModeTitle": "Безпечний режим",
+  "securityModeSubtitle": "Приховує особисту інформацію",
+  "securitySettingsUnavailable": "Зміна цього налаштування поки недоступна",
+  "securityFindByPhone": "Хто може знайти мене за номером",
+  "securityWhoCanCall": "Хто може мені телефонувати",
+  "securityWhoCanInvite": "Хто може запрошувати мене в чати",
+  "securityShowContact": "Показувати контакт",
+  "securityContentSafe": "Безпечний",
+  "securityContentAll": "Увесь",
+  "securityShowOnlineStatus": "Бачити статус у мережі",
+  "securityShowMyNumber": "Бачити мій номер",
+  "securityConfirmTitle": "Ви впевнені?",
+  "securityHiddenStatusWarning": "Ви не зможете бачити статус у мережі інших користувачів.",
+  "securityConfidentialityHeader": "КОНФІДЕНЦІЙНІСТЬ",
+  "securityReadReceipts": "Звіти про прочитання",
+  "securityAltKeyboard": "Альтернативна клавіатура",
+  "securityUnsafeFiles": "Приймати небезпечні файли",
+  "securityAudioTranscription": "Розшифровка аудіо",
+  "securityBlacklistTitle": "Чорний список",
+  "securityBlacklistNotification": "Чорний список: {count} контактів",
+  "@securityBlacklistNotification": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordEntryWrongPassword": "Невірний пароль",
+  "passwordEntryConfirmTitle": "Підтвердити пароль",
+  "passwordEntryCurrentPasswordHint": "Поточний пароль",
+  "passwordEntryContinue": "Продовжити",
+  "passwordEntryNotSetTitle": "Пароль не встановлено",
+  "passwordEntry2faSubtitle": "Двофакторна автентифікація",
+  "passwordEntrySetupAction": "Встановити пароль",
+  "passwordEntryGateMessage": "Введіть пароль для входу, щоб керувати захистом",
+  "passwordEntryGenericPasswordHint": "Пароль",
+  "passwordEntrySetTitle": "Пароль встановлено",
+  "passwordEntryHintPrefix": "Підказка: {hint}",
+  "@passwordEntryHintPrefix": {
+    "placeholders": {
+      "hint": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordEntryChangePasswordAction": "Змінити пароль",
+  "passwordEntryChangeEmailAction": "Змінити email",
+  "passwordEntryDeleteAction": "Видалити пароль",
+  "passwordEntryMinPasswordError": "Пароль має містити щонайменше 6 символів",
+  "passwordEntryMismatchError": "Паролі не збігаються",
+  "passwordEntryInvalidEmailError": "Введіть коректний email",
+  "passwordEntryInvalidCodeError": "Введіть 6-значний код",
+  "passwordEntrySetupTitle": "Налаштування пароля",
+  "passwordEntryStepPassword": "Пароль",
+  "passwordEntryStepHint": "Підказка",
+  "passwordEntryStepEmail": "Email",
+  "passwordEntryStepCode": "Код",
+  "passwordEntryChoosePassword": "Придумайте пароль",
+  "passwordEntryMinCharsHint": "Щонайменше 6 символів",
+  "passwordEntryEnterPasswordHint": "Введіть пароль",
+  "passwordEntryEnterAgain": "Введіть пароль ще раз",
+  "passwordEntryRepeatHint": "Повторіть пароль",
+  "passwordEntryHintForPassword": "Підказка для пароля",
+  "passwordEntryOptional": "Необов'язково",
+  "passwordEntryHintFieldHint": "Введіть підказку (необов'язково)",
+  "passwordEntryLinkEmail": "Прив'язати email",
+  "passwordEntryEmailPurpose": "Для відновлення пароля. Необов'язково",
+  "passwordEntryEmailHintOptional": "example@mail.com (необов'язково)",
+  "passwordEntryEnterCode": "Введіть код",
+  "passwordEntryCodeSentTo": "Код надіслано на {email}",
+  "@passwordEntryCodeSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordEntryChangedNotif": "Пароль змінено",
+  "passwordEntryNewPassword": "Новий пароль",
+  "passwordEntryNewPasswordHint": "Введіть новий пароль",
+  "passwordEntryRepeatNewPasswordHint": "Повторіть новий пароль",
+  "passwordEntryEmailChangedNotif": "Email змінено",
+  "passwordEntryNewEmail": "Новий email",
+  "passwordEntryEmailHint": "example@mail.com",
+  "passwordEntryRemovedNotif": "Пароль видалено",
+  "passwordEntryRemoveTitle": "Видалити пароль",
+  "passwordEntryRemoveWarning": "Увага! Видалення пароля послабить захист вашого акаунта.",
+  "cloudStorageNoActiveProfile": "Немає активного профілю",
+  "cloudStorageSetupFailed": "Не вдалося створити середовище",
+  "cloudStorageTitle": "Хмарне сховище",
+  "cloudStorageNotConfiguredTitle": "Середовище хмарного сховища не налаштовано",
+  "cloudStorageNotConfiguredSubtitle": "Почнемо? Це швидко.",
+  "cloudStorageStart": "Почати",
+  "cloudStorageUploadingPercent": "Завантаження {percent}%",
+  "@cloudStorageUploadingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cloudStorageStartUploadHint": "Розпочніть завантаження, щоб побачити прогрес",
+  "cloudStorageEmptyTitle": "У хмарі поки порожньо...",
+  "cloudStorageEmptySubtitle": "Додамо щось?",
+  "cloudStorageUpload": "Завантажити",
+  "cloudStorageFromFile": "З файлу",
+  "cloudStorageById": "За ID",
+  "cloudStorageFileIdLabel": "ID файлу",
+  "cloudStorageSizeLabel": "Розмір",
+  "cloudStorageNoLinkYet": "Посилання поки немає. Створіть його.",
+  "cloudStorageLinkExpiresIn": "Посилання діє ще {time}",
+  "@cloudStorageLinkExpiresIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "cloudStorageLinkCopied": "Посилання скопійовано",
+  "cloudStorageInvalidId": "Невірний ID",
+  "cloudStorageSendError": "Помилка відправлення",
+  "cloudStorageSendByIdTitle": "Надіслати за ID",
+  "cloudStorageSend": "Надіслати",
+  "digitalIdGosuslugiLinkUnavailable": "Прив'язка Держпослуг недоступна на цій платформі. Зробіть це у мобільному застосунку.",
+  "digitalIdGosuslugiLinkFailed": "Не вдалося отримати посилання на Держпослуги",
+  "digitalIdGosuslugiTitle": "Держпослуги",
+  "digitalIdDocsUnavailable": "Документи поки недоступні. Спробуйте пізніше.",
+  "digitalIdTitle": "Цифровий ID",
+  "digitalIdNotConfiguredTitle": "Цифровий ID не налаштовано",
+  "digitalIdLinkGosuslugiHint": "Прив'яжіть акаунт Держпослуг, щоб ваші документи з'явилися в Цифровому ID. Номер телефону в MAX має збігатися з номером у профілі Держпослуг.",
+  "digitalIdLinkOrRefreshHint": "Прив'яжіть Держпослуги, щоб отримати доступ до документів, або оновіть сторінку, якщо ви вже налаштували Цифровий ID.",
+  "digitalIdLoadDocuments": "Завантажити документи",
+  "digitalIdLinkGosuslugiButton": "Прив'язати Держпослуги",
+  "digitalIdGosuslugiProfileFallback": "Профіль Держпослуг",
+  "digitalIdBirthDate": "Дата народження: {date}",
+  "@digitalIdBirthDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "digitalIdPersonalDataTitle": "Особисті дані",
+  "digitalIdSnilsLabel": "СНІЛС",
+  "digitalIdInnLabel": "ІПН",
+  "digitalIdBirthPlaceLabel": "Місце народження",
+  "digitalIdRegistrationAddressLabel": "Адреса реєстрації",
+  "digitalIdDocumentsTitle": "Документи",
+  "digitalIdDocSeries": "серія {series}",
+  "@digitalIdDocSeries": {
+    "placeholders": {
+      "series": {
+        "type": "String"
+      }
+    }
+  },
+  "digitalIdDocNumber": "№ {number}",
+  "@digitalIdDocNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "digitalIdPassesTitle": "Перепустки",
+  "digitalIdCardInn": "ІПН {inn}",
+  "@digitalIdCardInn": {
+    "placeholders": {
+      "inn": {
+        "type": "String"
+      }
+    }
+  },
+  "digitalIdBiometryConfigured": "Біометрія налаштована на цьому пристрої",
+  "digitalIdBiometryNotConfigured": "Біометрія не налаштована на цьому пристрої",
+  "digitalIdDocPassport": "Паспорт РФ",
+  "digitalIdDocOms": "Поліс ОМС",
+  "digitalIdDocDriverLicense": "Водійське посвідчення",
+  "digitalIdDocVehicleSts": "Свідоцтво про реєстрацію ТЗ (СТС)",
+  "digitalIdDocChildBirthCert": "Свідоцтво про народження",
+  "digitalIdDocPensionCert": "Пенсійне посвідчення",
+  "digitalIdDocDisabledCert": "Довідка про інвалідність",
+  "digitalIdDocLargeFamilyCert": "Посвідчення багатодітної сім'ї",
+  "digitalIdDocStudentTicket": "Студентський квиток",
+  "digitalIdDocChildInn": "ІПН дитини",
+  "digitalIdDocChildOms": "Поліс ОМС дитини",
+  "attachSheetGallery": "Галерея",
+  "attachSheetPoll": "Опитування",
+  "attachSheetCameraError": "Не вдалося відкрити камеру",
+  "attachSheetSendFileTitle": "Надіслати файл",
+  "attachSheetSendFileSubtitle": "Документ, архів або будь-який інший файл",
+  "attachSheetChooseFileButton": "Вибрати файл",
+  "attachSheetShareLocationTitle": "Поділитися геопозицією",
+  "attachSheetShareLocationSubtitle": "Надіслати ваше поточне місцеперебування",
+  "attachSheetSendLocationButton": "Надіслати геопозицію",
+  "attachSheetCreatePoll": "Створити опитування",
+  "attachSheetCreatePollSubtitle": "Запитання з варіантами відповідей",
+  "attachSheetNoImagesFound": "Зображень не знайдено",
+  "attachSheetLimitedAccessInfo": "Доступ не до всіх фотографій",
+  "attachSheetSectionInProgress": "Розділ у розробці",
+  "attachSheetContact": "Контакт",
+  "attachSheetContactSearchHint": "Пошук контактів",
+  "attachSheetNoContacts": "У вас поки немає контактів",
+  "attachSheetNoContactsFound": "Контактів не знайдено",
+  "attachSheetNoGalleryAccessTitle": "Немає доступу до галереї",
+  "attachSheetNoGalleryAccessSubtitle": "Дозвольте доступ до фотографій, щоб вибирати їх звідси",
+  "attachSheetAllow": "Дозволити",
+  "attachSheetSettings": "Налаштування",
+  "attachSheetAddCaptionHint": "Додати підпис...",
+  "attachSheetCamera": "Камера",
+  "attachSheetCameraAllow": "Дозволити камеру",
+  "photoEditorApplyFailed": "Не вдалося застосувати",
+  "photoEditorFlipTooltip": "Віддзеркалити",
+  "photoEditorRotateTooltip": "Повернути",
+  "photoEditorCancel": "СКАСУВАТИ",
+  "photoEditorReset": "СКИНУТИ",
+  "photoEditorDone": "ГОТОВО",
+  "photoEditorTextDialogTitle": "Текст",
+  "photoEditorTextDialogHint": "Введіть текст",
+  "photoEditorOk": "ОК",
+  "photoEditorApplyChangesFailed": "Не вдалося застосувати зміни",
+  "photoEditorClearAll": "Очистити все",
+  "photoEditorAddText": "Додати текст",
+  "photoEditorTabDraw": "МАЛЮВАТИ",
+  "photoEditorTabStickers": "СТІКЕРИ",
+  "photoEditorTabText": "ТЕКСТ",
+  "photoEditorChannelAll": "Усі",
+  "photoEditorChannelRed": "Червоний",
+  "photoEditorChannelGreen": "Зелений",
+  "photoEditorChannelBlue": "Синій",
+  "photoEditorEnhance": "Покращення",
+  "photoEditorExposure": "Експозиція",
+  "photoEditorContrast": "Контраст",
+  "photoEditorSaturation": "Насиченість",
+  "photoEditorWarmth": "Теплота",
+  "photoEditorVignette": "Віньєтка",
+  "photoEditorBlurOff": "Вимкнено",
+  "photoEditorBlurRadial": "Радіальне",
+  "photoEditorBlurLinear": "Лінійне",
+  "fontSettingsInvalidInput": "Введіть посилання на шрифт або його назву",
+  "fontSettingsFontNotFound": "Шрифт \"{name}\" не знайдено, або немає мережі",
+  "@fontSettingsFontNotFound": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fontSettingsFontAdded": "Шрифт \"{name}\" додано",
+  "@fontSettingsFontAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fontSettingsFontRemoved": "Шрифт \"{name}\" видалено",
+  "@fontSettingsFontRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fontSettingsAddFontTitle": "Додати шрифт",
+  "fontSettingsAddFontDescription": "Вставте посилання з Google Fonts або назву шрифту",
+  "fontSettingsAddFontConfirm": "Додати",
+  "fontSettingsTitle": "Шрифти",
+  "fontSettingsSectionFont": "Шрифт",
+  "fontSettingsLoading": "Завантаження…",
+  "fontSettingsSectionFontSize": "Розмір шрифту",
+  "fontSettingsPreviewLabel": "ПОПЕРЕДНІЙ ПЕРЕГЛЯД",
+  "fontSettingsReset": "Скинути",
+  "updateAvailableTitle": "Доступне оновлення",
+  "updateAvailableBody": "Вийшла версія {version}. Оновити застосунок?",
+  "@updateAvailableBody": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateWhatsNew": "ЩО НОВОГО",
+  "updateAction": "Оновити",
+  "updateLater": "Пізніше",
+  "updateSkip": "Пропустити",
+  "updateDownloading": "Завантаження оновлення…",
+  "updateDownloadFailed": "Не вдалося завантажити оновлення",
+  "updateCheck": "Перевірити оновлення",
+  "updateChecking": "Перевірка оновлень…",
+  "updateUpToDate": "У вас найновіша версія",
+  "updateCheckFailed": "Не вдалося перевірити оновлення. Спробуйте пізніше",
+  "profileResurrecting": "От халепа! Сервер не надіслав ваш профіль. Спроба згенерувати знову…",
+  "profilePhoneRegenFailed": "Не вдалося відновити ваш номер телефону. Увійдіть ще раз і повідомте про проблему розробникам",
+  "addContactTitle": "Додати контакт",
+  "addContactFirstName": "Ім'я",
+  "addContactLastName": "Прізвище (необов'язково)",
+  "addContactSave": "Зберегти контакт",
+  "addContactNotFound": "{phone} не знайдено",
+  "@addContactNotFound": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "addContactNotFoundSubtitle": "Цього номера ще немає в застосунку",
+  "addContactSearchOther": "Шукати інший номер",
+  "addContactError": "Не вдалося додати контакт",
+  "contactBubbleNew": "Новий контакт",
+  "contactBubbleAlreadyAdded": "Уже у ваших контактах",
+  "contactBubbleOpenProfile": "Відкрити профіль",
+  "miniAppOpen": "Відкрити",
+  "miniAppFailed": "Не вдалося відкрити застосунок",
+  "editContactMenu": "Редагувати контакт",
+  "editContactTitle": "Редагувати контакт",
+  "editContactFirstName": "Ім'я",
+  "editContactLastName": "Прізвище",
+  "editContactSave": "Зберегти",
+  "editContactDelete": "Видалити контакт",
+  "editContactDeleteConfirmTitle": "Видалити контакт?",
+  "editContactDeleteConfirmBody": "Цей контакт буде видалено з вашого списку.",
+  "editContactDeleteCancel": "Скасувати",
+  "editContactError": "Не вдалося зберегти зміни",
+  "downloadsTitle": "Останні завантаження",
+  "downloadsTooltip": "Завантаження",
+  "downloadsSettings": "Налаштування",
+  "downloadsEmpty": "Тут з'являться завантажені файли",
+  "downloadsUnknownSource": "Невідоме джерело",
+  "downloadsPhoto": "Фото",
+  "downloadsVideo": "Відео",
+  "downloadsGif": "GIF",
+  "downloadsAudio": "Аудіо",
+  "downloadsFile": "Файл",
+  "downloadsOpenFailed": "Не вдалося відкрити файл",
+  "downloadsClearHistory": "Очистити історію завантажень",
+  "downloadsClearTitle": "Очистити історію завантажень?",
+  "downloadsClearBody": "Файли залишаться на пристрої, але цей список буде очищено.",
+  "downloadsClearConfirm": "Очистити",
+  "downloadsHistoryCleared": "Історію завантажень очищено",
+  "uploadNotificationPhotos": "{count, plural, =1{Фотографія} few{{count} фотографії} many{{count} фотографій} other{{count} фотографій}}",
+  "@uploadNotificationPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadNotificationVideo": "Відео",
+  "uploadNotificationVideoNote": "Відеоповідомлення",
+  "uploadNotificationVoice": "Голосове повідомлення",
+  "uploadNotificationFile": "Файл",
+  "uploadNotificationMultiple": "{count, plural, other{Надсилання {count} файлів}}",
+  "@uploadNotificationMultiple": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadNotificationPreparing": "Підготовка…",
+  "uploadSpeedBytes": "{value} Б/с",
+  "@uploadSpeedBytes": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadSpeedKb": "{value} КБ/с",
+  "@uploadSpeedKb": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadSpeedMb": "{value} МБ/с",
+  "@uploadSpeedMb": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "savedMessagesEmptyPreview": "Збережіть щось тут",
+  "proxyCurrentState": "Зараз: {value}",
+  "@proxyCurrentState": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "blacklistEmpty": "Ніхто не заблокований",
+  "blacklistLoadError": "Не вдалося завантажити чорний список",
+  "videoEditorQualityLow": "Малий розмір",
+  "videoEditorQualityHigh": "Висока якість",
+  "videoEditorCaptionHint": "Додати підпис...",
+  "videoEditorMuteTooltip": "Надіслати без звуку",
+  "videoEditorProcessing": "Обробка відео…",
+  "videoEditorExportFailed": "Не вдалося обробити відео",
+  "videoEditorFrameFailed": "Не вдалося захопити кадр",
+  "videoEditorQualityTooltip": "Якість",
+  "webPushTitle": "Сповіщення на iOS",
+  "webPushIntro": "У Komet немає звичайних push-сповіщень на iOS: Apple видає токен сповіщень лише застосункам, підписаним сертифікатом розробника, а встановлені стороннім способом (sideloaded) збірки його ніколи не отримують.\n\nОбхідний шлях — це вебзастосунок на Домашньому екрані. Власний сервер MAX надсилає сповіщення через Apple, а окрема іконка їх відображає.\n\nДля цього потрібна вебсесія. Komet створює її та самостійно підтверджує з цього ж пристрою — без номерів телефону чи кодів.",
+  "webPushConfirm": "Продовжити",
+  "webPushPasswordExplainer": "На цьому акаунті увімкнено двофакторний захист.",
+  "webPushPasswordHintLabel": "Підказка: {hint}",
+  "@webPushPasswordHintLabel": {
+    "placeholders": {
+      "hint": {
+        "type": "String"
+      }
+    }
+  },
+  "webPushPasswordHint": "Пароль",
+  "webPushInstallTitle": "Встановіть вебзастосунок",
+  "webPushInstallBody": "Відкрийте push.komet.pw у Safari, додайте на Домашній екран і запустіть іконку, що з'явиться. Сповіщення не працюють із вкладки браузера — так влаштована iOS.\n\nУ застосунку дозвольте сповіщення, створіть підписку та натисніть «Відкрити Komet». Підписка зареєструє себе звідти.",
+  "webPushLinkedTitle": "Сповіщення підключено",
+  "webPushLinkedBody": "Підписку зареєстровано на сервері. Не видаляйте іконку з Домашнього екрана — сповіщення працюють завдяки їй.\n\nЯкщо push-сповіщення перестануть надходити, відкрийте вебзастосунок і прив'яжіть знову: Apple іноді змінює адресу підписки.",
+  "webPushOpenSite": "Відкрити push.komet.pw",
+  "webPushSignOut": "Відключити сповіщення",
+  "webPushLinked": "Сповіщення підключено",
+  "webPushLinkFailed": "Не вдалося підключити сповіщення: {error}",
+  "@webPushLinkFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "webPushNotAuthorized": "Спочатку увійдіть у розділ «Сповіщення через PWA»",
+  "webPushConnect": "Підключити сповіщення",
+  "webPushWaitingBody": "Komet підтверджує вебсесію з цього пристрою. Зазвичай це займає кілька секунд.",
+  "webPushNeedsOnline": "Немає з'єднання з сервером. Дочекайтеся підключення і спробуйте знову.",
+  "webPushSignOutConfirm": "Вебсесію буде завершено, і вона зникне зі списку ваших пристроїв. Щоб повернути сповіщення, доведеться підключатися знову.",
+  "webPushSignOutAction": "Відключити",
+  "webPushStatusService": "Сервіс",
+  "webPushStatusToken": "Токен",
+  "webPushStatusLinkedAt": "Прив'язано",
+  "webPushStatusDevice": "Пристрій"
+}
