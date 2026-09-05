@@ -214,6 +214,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 ListTile(
                   title: Text(
+                    l10n.languageNameUk,
+                    style: TextStyle(
+                      color: cs.onSurface,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    KometApp.stateOf(
+                      appContext,
+                    )?.applyLocale(const Locale('uk'));
+                  },
+                ),
+                ListTile(
+                  title: Text(
                     l10n.languageNameEn,
                     style: TextStyle(
                       color: cs.onSurface,
